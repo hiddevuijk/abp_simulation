@@ -32,12 +32,21 @@ struct Deriv {
 	int get_N() { return N;}
 	double get_Dt() { return 0.5*sqrt_2Dt*sqrt_2Dt;}
 	double get_Dr() { return 0.5*sqrt_2Dr*sqrt_2Dr;}
+	std::vector<std::vector<double> > get_F() {return F;}
 
 	private:
 	int N;				// number of particles
 	double sqrt_2Dt;	// sqrt(2*Dt)
 	double sqrt_2Dr;	// sqrt(2*Dr)
-	int seed;
+	int seed;			// seed for the random generator
+
+	// the force matrix
+	std::vector<std::vector<double> > F;
+	// calculate the force matrix
+	void update_F();
+	// force between two particles
+	std::vector<double> f(const std::vector<double>& r1,
+			const std::vector<double>& r2);
 
 	// random number generator
 	std::default_random_engine generator;
