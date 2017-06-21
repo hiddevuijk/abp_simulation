@@ -7,6 +7,7 @@
  * is done in integration.h
  */
 
+#include <iostream>
 
 #include <cmath>
 #include <vector>
@@ -21,7 +22,9 @@ struct Deriv {
 			double epss, double sigmaa, int seedd):
 			N(NN),sqrt_2Dt(std::sqrt(2*Dtt)), sqrt_2Dr(std::sqrt(2*Drr)),
 			beta(betaa), eps(epss), sigma(sigmaa),
-			seed(seedd), generator(seed),ndist(0.,1.){}
+			seed(seedd), generator(seed),ndist(0.,1.),
+			F(N,std::vector<std::vector<double> >(N,std::vector<double>(3,0.)))
+			{}
 
 
 	// calculate derivatives and new positions
@@ -65,13 +68,15 @@ struct Deriv {
 std::vector<double> Deriv::f(const std::vector<double>& r1,
 		const std::vector<double>& r2)
 {
+	// devide out L and ...
 	std::vector<double> r = subtr(r1,r2);
 	double abs_r = len_vec(r);
 	double abs_f = 0;
 	if(abs_r<sigma*pow(2,1./6))
 		abs_f = 4*eps*(pow(sigma/abs_r,12)-pow(sigma/abs_r,6))/beta;
-	mult_by(r,abs_f/sqrt(abs_r));
 
+	mult_by(r,abs_f/sqrt(abs_r));
+	
 	return r;
 }
 
@@ -80,6 +85,7 @@ void Deriv::update_F(
 {
 	for(int i=0;i<N;++i) {
 		for(int j=i+1;j<N;++j) {
+
 			F[i][j] = f(r[i],r[j]); 
 			F[j][i] = mult(F[i][j],-1.);
 		}
@@ -95,6 +101,7 @@ void Deriv::operator() (
 		std::vector<std::vector<double> >& dp,
 		double dt)
 {
+
 	double sqrt_dt = std::sqrt(dt);
 	double etaX, etaY, etaZ;
 	update_F(r);
@@ -103,14 +110,14 @@ void Deriv::operator() (
 		dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt;
 		dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt;
 		dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt;
-		// add inter particle forces
 		for(int j=0;j<N;++j) { // loop over j=i;j<N;++j ?
 			if(i==j) continue;
 			dr[i][0] += F[i][j][0];
 			dr[i][1] += F[i][j][1];
 			dr[i][2] += F[i][j][2];
-		}
 
+		}
+		add_to(p[i],dr[i]);		
 		// calculate p increment
 		etaX = ndist(generator)*sqrt_dt*sqrt_2Dr;
 		etaY = ndist(generator)*sqrt_dt*sqrt_2Dr;
@@ -118,8 +125,9 @@ void Deriv::operator() (
 		dp[i][0] = (etaY*p[i][2] - etaZ*p[i][1]);
 		dp[i][1] = (etaZ*p[i][0] - etaX*p[i][2]);
 		dp[i][2] = (etaX*p[i][1] - etaY*p[i][0]);
+		add_to(p[i],dp[i]);
+		normalize(p[i]);
 	}
-		
 }
 
 #endif
