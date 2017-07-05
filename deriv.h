@@ -7,7 +7,7 @@
 #include <cmath>
 #include <vector>
 #include <random>
-
+#include <assert.h>
 #include "vecmanip.h"
 
 struct Deriv {
@@ -95,9 +95,9 @@ void Deriv::update_F(
 				F[i][0] += abs_f*dx/abs_r;
 				F[i][1] += abs_f*dy/abs_r;
 				F[i][2] += abs_f*dz/abs_r;
-				F[i][0] += abs_f*dx/abs_r;
-				F[i][1] += abs_f*dy/abs_r;
-				F[i][2] += abs_f*dz/abs_r;
+				F[j][0] -= abs_f*dx/abs_r;
+				F[j][1] -= abs_f*dy/abs_r;
+				F[j][2] -= abs_f*dz/abs_r;
 			}
 		}
 	}
@@ -117,10 +117,15 @@ void Deriv::operator() (
 	double etaX, etaY, etaZ;
 	update_F(r);
 	for(int i=0;i<N;++i) {
+		
+		assert(F[i][0]*dt<sigma);
+		assert(F[i][1]*dt<sigma);
+		assert(F[i][2]*dt<sigma);
 		// calculate r increment
 		dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
 		dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
 		dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
+		add_to(r[i],dr[i]);
 		// calculate p increment
 		etaX = ndist(generator)*sqrt_dt*sqrt_2Dr;
 		etaY = ndist(generator)*sqrt_dt*sqrt_2Dr;
@@ -128,6 +133,7 @@ void Deriv::operator() (
 		dp[i][0] = (etaY*p[i][2] - etaZ*p[i][1]);
 		dp[i][1] = (etaZ*p[i][0] - etaX*p[i][2]);
 		dp[i][2] = (etaX*p[i][1] - etaY*p[i][0]);
+		add_to(p[i],dp[i]);
 		normalize(p[i]);
 	}
 }

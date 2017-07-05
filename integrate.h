@@ -19,7 +19,7 @@ void integrate(std::vector<std::vector<double> >& r,
 		ti += dt;
 	}
 	if(ti < tf)
-		deriv(r,dr,p,dp,tf-ti)
+		deriv(r,dr,p,dp,tf-ti);
 }
 
 
@@ -34,7 +34,7 @@ void integrate(std::vector<std::vector<double> >& r,
 		ti += dt;
 	}
 	if(ti < tf)
-		deriv(r,dr,p,dp,tf-ti)
+		deriv(r,dr,p,dp,tf-ti);
 }
 
 
