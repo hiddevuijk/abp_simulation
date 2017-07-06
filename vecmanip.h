@@ -11,6 +11,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <random>
+
+
 
 // multiply all elements of a vec with a const
 void mult_by(std::vector<double>& v, double a)
@@ -126,7 +129,19 @@ void write_vec(std::vector<int> v,std::string fileName, int N = 0)
 }
 
 
-
+void rand_vecs(std::vector<std::vector<double> >& r,
+	int N, int dim, double min, double max,
+	std::default_random_engine& gen, double norm = -1.)
+{
+	std::uniform_real_distribution<double> dist(min,max);
+	for(int i=0;i<N;++i) {
+		for(int d=0;d<dim;++d) {
+			r[i][d] = dist(gen);
+		}
+		if(norm > 0.)
+			normalize(r[i],norm);
+	}
+}
 
 
 
