@@ -8,16 +8,18 @@
 using namespace std;
 
 
-void read_variables(int& N,double& Dt,double& Dr,double& gamma,
-	double& beta,double& eps,double& sigma,double& L,double& dt,
-	double& tf,double& teq,int& seed,std::string& name,
-	std::string fileName)
+void read_variables(int& N,double& rho, double& Dt,double& Dr,double& gamma,
+	double& beta,double& eps,double& sigma,double& dt,
+	double& tf,double& teq, int& seed,
+	std::string& name,std::string fileName)
 {
 	std::string temp;
 	std::ifstream infile(fileName);
 
 	infile >>temp;
 	infile >> N;
+	infile >> temp;
+	infile >> rho;
 	infile >>temp;
 	infile >> Dt;
 	infile >>temp;
@@ -31,14 +33,12 @@ void read_variables(int& N,double& Dt,double& Dr,double& gamma,
 	infile >>temp;
 	infile >> sigma;
 	infile >>temp;
-	infile >> L;
-	infile >>temp;
 	infile >> dt;
 	infile >>temp;
 	infile >> tf;
 	infile >>temp;
 	infile >> teq;
-	infile >>temp;
+	infile >> temp;
 	infile >> seed;
 	infile >>temp;
 	infile >> name;
