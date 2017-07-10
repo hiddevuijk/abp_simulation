@@ -68,7 +68,7 @@ struct Deriv {
 double Deriv::f(const double& r)
 {
 	double sr6 = pow(sigma/r,6.);
-	return -24.*eps*(2*sr6*sr6-sr6)/(r*beta);
+	return eps*(12*sr6*sr6-6*sr6)/(r*beta);
 }
 
 void Deriv::update_F(
@@ -92,14 +92,18 @@ void Deriv::update_F(
 			abs_r = sqrt(dx*dx+dy*dy+dz*dz);
 			if(abs_r < sigma*pow(2.,1./6) ) {
 				abs_f = f(abs_r);
-				F[i][0] += abs_f*dx/abs_r;
-				F[i][1] += abs_f*dy/abs_r;
-				F[i][2] += abs_f*dz/abs_r;
-				F[j][0] -= abs_f*dx/abs_r;
-				F[j][1] -= abs_f*dy/abs_r;
-				F[j][2] -= abs_f*dz/abs_r;
+				F[i][0] -= abs_f*dx/abs_r;
+				F[i][1] -= abs_f*dy/abs_r;
+				F[i][2] -= abs_f*dz/abs_r;
+				F[j][0] += abs_f*dx/abs_r;
+				F[j][1] += abs_f*dy/abs_r;
+				F[j][2] += abs_f*dz/abs_r;
 			}
 		}
+		assert(F[i][0]*dt<sigma);
+		assert(F[i][1]*dt<sigma);
+		assert(F[i][2]*dt<sigma);
+
 	}
 }
 
@@ -117,10 +121,8 @@ void Deriv::operator() (
 	double etaX, etaY, etaZ;
 	update_F(r);
 	for(int i=0;i<N;++i) {
-		
-		assert(F[i][0]*dt<sigma);
-		assert(F[i][1]*dt<sigma);
-		assert(F[i][2]*dt<sigma);
+			
+
 		// calculate r increment
 		dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
 		dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
