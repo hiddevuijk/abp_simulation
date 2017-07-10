@@ -14,6 +14,24 @@
 #include <random>
 
 
+double distance_3d(const std::vector<double>& a,
+	const std::vector<double>& b, double L=-1)
+{
+	double d = 0;
+	double di = 0;
+	if( L < 0 ) {
+		for(int i=0;i<3;++i)
+			d+= (a[i]-b[i])*(a[i]-b[i]);
+	} else {
+		for(int i=0;i<3;++i) {
+			di = a[i] - b[i];
+			di -= L*round(di/L);
+			d += di*di;
+		}
+	}
+	return sqrt(d);
+}
+
 
 // multiply all elements of a vec with a const
 void mult_by(std::vector<double>& v, double a)
