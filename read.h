@@ -10,7 +10,7 @@ using namespace std;
 
 void read_variables(int& N,double& rho, double& Dt,double& Dr,double& gamma,
 	double& beta,double& eps,double& sigma,double& dt,
-	double& tf,double& teq, int& seed,
+	double& tf,double& teq, int& navg, int& seed,
 	std::string& name,std::string fileName)
 {
 	std::string temp;
@@ -38,6 +38,8 @@ void read_variables(int& N,double& rho, double& Dt,double& Dr,double& gamma,
 	infile >> tf;
 	infile >>temp;
 	infile >> teq;
+	infile >> temp;
+	infile >> navg;
 	infile >> temp;
 	infile >> seed;
 	infile >>temp;

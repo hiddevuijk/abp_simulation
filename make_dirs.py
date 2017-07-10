@@ -1,6 +1,6 @@
 import numpy as np
 
-
+navg = 20;
 N = 100;
 Dt = 1./1;
 Dr = 20.*Dt;
@@ -9,10 +9,10 @@ beta = 1.;
 eps = 1.;
 sigma = 1.;
 seed = 123456780;
-d = 1.
+d = sigma
 dt = (1.e-5)*d*d/Dt;
-tf = 0.;
-teq = 20.*d*d/Dt;
+tf = 10.*d*d/Dt;
+teq = 10.*d*d/Dt;
 
 rho = 0.2
 
@@ -31,6 +31,7 @@ infile.write("sigma=\n%f\n" % sigma)
 infile.write("dt=\n%f\n" % dt)
 infile.write("tf=\n%f\n" % tf)
 infile.write("teq=\n%i\n" % teq)
+infile.write("navg=\n%i\n" % navg)
 infile.write("seed=\n%i\n" % seed)
 infile.write("name=\n" + name)
 
