@@ -11,7 +11,7 @@ using namespace std;
 void read_variables(int& N,double& Dt,double& Dr,double& gamma,
 	double& beta,double& eps,double& sigma,double& L,double& dt,
 	double& tf,double& teq,int& seed,std::string& name,
-	std::string input_name);
+	std::string fileName)
 {
 	std::string temp;
 	std::ifstream infile(fileName);
