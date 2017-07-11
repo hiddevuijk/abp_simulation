@@ -4,10 +4,10 @@
 #include <string>
 #include <random>
 
-#include "read.h"
-#include "deriv.h"
-#include "integrate.h"
-#include "pair_distribution.h"
+#include "headers/read.h"
+#include "headers/deriv.h"
+#include "headers/integrate.h"
+#include "headers/pair_distribution.h"
 
 using namespace std;
 
