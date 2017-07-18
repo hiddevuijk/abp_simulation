@@ -25,7 +25,7 @@ std::vector<double> pair_distances(
 			dist[di++] = distance_3d(r[i],r[j],L);
 		}
 	}	
-	std::sort(dist.begin(),dist.end());
+	//std::sort(dist.begin(),dist.end());
 	
 	return dist;
 }

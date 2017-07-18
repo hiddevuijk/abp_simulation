@@ -1,6 +1,6 @@
 import numpy as np
 
-navg = 20;
+navg = 0;
 N = 100;
 Dt = 1./1;
 Dr = 20.*Dt;
@@ -11,7 +11,7 @@ sigma = 1.;
 seed = 123456780;
 d = sigma
 dt = (1.e-5)*d*d/Dt;
-tf = 10.*d*d/Dt;
+tf = 1.*d*d/Dt;
 teq = 10.*d*d/Dt;
 
 rho = 0.2
