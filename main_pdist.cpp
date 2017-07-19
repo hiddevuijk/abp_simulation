@@ -51,9 +51,16 @@ int main(int argc, char *argv[])
 	Deriv deriv(N,L,Dt,Dr,gamma,beta,eps,sigma,seed);
 
 	// equilibrate: integrate until teq
-	//integrate(r,dr,p,dp,deriv,0,teq,dt);
+	integrate(r,dr,p,dp,deriv,0,teq,dt);
 
-	write_mat(r,N,3,"r.dat");
+	for( int n =0;n<navg;n++) {
+		integrate(r,dr,p,dp,deriv,0,tf,dt);
+		pdist_temp = pair_distances(r,L);
+		for(int i =0;i<N*(N-1)/2;++i)
+			pdist[i+n*N*(N-1)/2] = pdist_temp[i];
+	}
+	std::sort(pdist.begin(),pdist.end());
+	write_vec(pdist,"pdist.dat");
 	return 0;
 }
 

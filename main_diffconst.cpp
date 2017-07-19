@@ -8,7 +8,7 @@
 #include "deriv.h"
 #include "integrate.h"
 #include "pair_distribution.h"
-#include "fcc_lattice.h"
+#include "diffconst.h"
 
 
 using namespace std;
@@ -17,7 +17,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 
-	int navg;
+	int Nt;
 	int N, seed;
 	double Dt,Dr,gamma,beta,eps,sigma,L,dt,tf,teq;
 	double rho;
@@ -33,35 +33,14 @@ int main(int argc, char *argv[])
 	}
 
 	// read variables from input file
-	read_variables(N,rho,Dt,Dr,gamma,beta,eps,sigma,dt,tf,teq,navg,seed,name,input_name);
+	read_variables(N,rho,Dt,Dr,gamma,beta,eps,sigma,dt,tf,teq,Nt,seed,name,input_name);
 	L = pow(N/rho,1./3);
-	int ndist = navg*N*(N-1)/2;
 
-	vector<double> pdist(ndist);
-	vector<double> pdist_temp(N*(N-1)/2);
-	vector<vector<double> > r(N,vector<double>(3));
-	vector<vector<double> > dr(N,vector<double>(3));
-	vector<vector<double> > p(N,vector<double>(3));
-	vector<vector<double> > dp(N,vector<double>(3));
 
-	// initalize r vector: put particles on a fcc lattice
-	init_r_fcc(r,N,sigma,L);
-
-	// init deriv objec to perform integration
 	Deriv deriv(N,L,Dt,Dr,gamma,beta,eps,sigma,seed);
 
-	// equilibrate: integrate until teq
-	//integrate(r,dr,p,dp,deriv,0,teq,dt);
-
-	write_mat(r,N,3,"r.dat");
-	return 0;
-}
-
-/*
 	default_random_engine gen(seed);
 
-	vector<double> pdist(ndist);
-	vector<double> pdist_temp(N*(N-1)/2);
 	vector<vector<double> > r(N,vector<double>(3));
 	vector<vector<double> > dr(N,vector<double>(3));
 	vector<vector<double> > p(N,vector<double>(3));
@@ -70,6 +49,33 @@ int main(int argc, char *argv[])
 	// start with random initial vectors
 	rand_vecs(r,N,3,-.5*L,.5*L,gen);
 	rand_vecs(p,N,3,-.5*L,.5*L,gen,1.);
+	integrate(r,dr,p,dp,deriv,0,teq,dt);
+
+	// initial position vectors
+	vector<vector<double> > r0 = r;
+
+	// traveld distances at an instance of time, compared to r0
+	vector<double> delta_r(N);
+
+	// <(r-r0)^2>, avg over all particles
+	vector<double> dR(Nt);
 
 
-*/
+	for( int ti =0;ti<Nt;ti++) {
+		integrate(r,dr,p,dp,deriv,0,tf,dt);
+
+		// calculate dist from start
+		//get_delta_r(r,r0,delta_r);
+		//dR[ti] = get_dR(delta_r);
+		dR[ti] = get_dR(r,r0);
+	}
+
+	write_vec(dR,name+".dat",Nt);	
+
+
+	return 0;
+}
+
+
+
+
