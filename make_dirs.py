@@ -1,7 +1,7 @@
 import numpy as np
 
 navg = 0;
-N = 100;
+N = 500;
 Dt = 1./1;
 Dr = 20.*Dt;
 gamma = 1.;
@@ -10,11 +10,11 @@ eps = 1.;
 sigma = 1.;
 seed = 123456780;
 d = sigma
-dt = (1.e-5)*d*d/Dt;
+dt = (1.e-6)*d*d/Dt;
 tf = 1.*d*d/Dt;
 teq = 10.*d*d/Dt;
 
-rho = 0.2
+rho = .7
 
 L = (N/rho)**(1/3.)
 

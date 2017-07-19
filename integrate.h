@@ -4,7 +4,6 @@
 
 #include <vector>
 
-
 #include "deriv.h"
 
 

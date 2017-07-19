@@ -2,14 +2,13 @@
 #define GUARD_deriv_h
 
 
-#include <iostream>
 
 #include <cmath>
 #include <vector>
 #include <random>
 #include <assert.h>
 #include "vecmanip.h"
-
+#include <iostream>
 struct Deriv {
 	public:
 
@@ -81,7 +80,6 @@ void Deriv::update_F(
 	for(int i=0;i<N;++i)
 		std::fill(F[i].begin(),F[i].end(),0.);
 
-
 	for(int i=0;i<N;++i) {
 
 		// add force on i due to j
@@ -94,13 +92,13 @@ void Deriv::update_F(
 			dz -= L*round(dz/L);
 			abs_r = sqrt(dx*dx+dy*dy+dz*dz);
 			if(abs_r < sigma*pow(2.,1./6) ) {
-				abs_f = f(abs_r);
-				F[i][0] -= abs_f*dx/abs_r;
-				F[i][1] -= abs_f*dy/abs_r;
-				F[i][2] -= abs_f*dz/abs_r;
-				F[j][0] += abs_f*dx/abs_r;
-				F[j][1] += abs_f*dy/abs_r;
-				F[j][2] += abs_f*dz/abs_r;
+				abs_f = f(abs_r)/abs_r;
+				F[i][0] -= abs_f*dx;
+				F[i][1] -= abs_f*dy;
+				F[i][2] -= abs_f*dz;
+				F[j][0] += abs_f*dx;
+				F[j][1] += abs_f*dy;
+				F[j][2] += abs_f*dz;
 			}
 		}
 
@@ -123,9 +121,9 @@ void Deriv::operator() (
 	for(int i=0;i<N;++i) {
 
 		//check if forces do not exceed critical value			
-		assert(F[i][0]*dt<sigma);
-		assert(F[i][1]*dt<sigma);
-		assert(F[i][2]*dt<sigma);
+		assert(abs(F[i][0])*dt<sigma);
+		assert(abs(F[i][1])*dt<sigma);
+		assert(abs(F[i][2])*dt<sigma);
 
 		// calculate r increment
 		dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
