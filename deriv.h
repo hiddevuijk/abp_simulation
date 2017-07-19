@@ -77,9 +77,12 @@ void Deriv::update_F(
 
 	double abs_r,abs_f,dx,dy,dz;
 
-	for(int i=0;i<N;++i) {
-		// set force on particle i to zero
+	// set force on particle i to zero
+	for(int i=0;i<N;++i)
 		std::fill(F[i].begin(),F[i].end(),0.);
+
+
+	for(int i=0;i<N;++i) {
 
 		// add force on i due to j
 		for(int j=i+1;j<N;++j) {
@@ -100,9 +103,6 @@ void Deriv::update_F(
 				F[j][2] += abs_f*dz/abs_r;
 			}
 		}
-		assert(F[i][0]*dt<sigma);
-		assert(F[i][1]*dt<sigma);
-		assert(F[i][2]*dt<sigma);
 
 	}
 }
@@ -121,13 +121,19 @@ void Deriv::operator() (
 	double etaX, etaY, etaZ;
 	update_F(r);
 	for(int i=0;i<N;++i) {
-			
+
+		//check if forces do not exceed critical value			
+		assert(F[i][0]*dt<sigma);
+		assert(F[i][1]*dt<sigma);
+		assert(F[i][2]*dt<sigma);
 
 		// calculate r increment
 		dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
 		dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
 		dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
 		add_to(r[i],dr[i]);
+
+		/*
 		// calculate p increment
 		etaX = ndist(generator)*sqrt_dt*sqrt_2Dr;
 		etaY = ndist(generator)*sqrt_dt*sqrt_2Dr;
@@ -137,6 +143,7 @@ void Deriv::operator() (
 		dp[i][2] = (etaX*p[i][1] - etaY*p[i][0]);
 		add_to(p[i],dp[i]);
 		normalize(p[i]);
+		*/
 	}
 }
 
