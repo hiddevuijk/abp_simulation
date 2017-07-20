@@ -50,6 +50,13 @@ int main(int argc, char *argv[])
 	// init deriv objec to perform integration
 	Deriv deriv(N,L,Dt,Dr,gamma,beta,eps,sigma,seed);
 
+	vector<double> pdtemp(N*(N-1));
+	pdtemp = pair_distances(r,L);
+	std::sort(pdtemp.begin(),pdtemp.end());
+	write_vec(pdtemp,"pd_init.dat");
+	return 0;
+
+
 	// equilibrate: integrate until teq
 	integrate(r,dr,p,dp,deriv,0,teq,dt);
 
@@ -63,20 +70,3 @@ int main(int argc, char *argv[])
 	write_vec(pdist,"pdist.dat");
 	return 0;
 }
-
-/*
-	default_random_engine gen(seed);
-
-	vector<double> pdist(ndist);
-	vector<double> pdist_temp(N*(N-1)/2);
-	vector<vector<double> > r(N,vector<double>(3));
-	vector<vector<double> > dr(N,vector<double>(3));
-	vector<vector<double> > p(N,vector<double>(3));
-	vector<vector<double> > dp(N,vector<double>(3));
-
-	// start with random initial vectors
-	rand_vecs(r,N,3,-.5*L,.5*L,gen);
-	rand_vecs(p,N,3,-.5*L,.5*L,gen,1.);
-
-
-*/
