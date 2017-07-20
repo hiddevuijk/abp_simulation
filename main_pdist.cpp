@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	}
 
 	// read variables from input file
-	read_variables(N,rho,Dt,Dr,gamma,beta,eps,sigma,dt,tf,teq,navg,seed,name,input_name);
+	read_variables_pairdist(N,rho,Dt,Dr,gamma,beta,eps,sigma,dt,tf,teq,navg,seed,name,input_name);
 	L = pow(N/rho,1./3);
 	int ndist = navg*N*(N-1)/2;
 
