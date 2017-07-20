@@ -1,7 +1,9 @@
 import numpy as np
 
-navg = 0;
+rho = .7
 N = 100;
+T = 100; # end time in tau_b
+Nt = 100;
 Dt = 1./1;
 Dr = 20.*Dt;
 gamma = 1.;
@@ -11,10 +13,12 @@ sigma = 1.;
 seed = 123456780;
 d = sigma
 dt = (1.e-5)*d*d/Dt;
-tf = 1.*d*d/Dt;
 teq = 10.*d*d/Dt;
 
-rho = .7
+
+
+tf = 1.*T/Nt
+tf *= d*d/Dt;
 
 L = (N/rho)**(1/3.)
 
@@ -32,7 +36,7 @@ infile.write("sigma=\n%f\n" % sigma)
 infile.write("dt=\n%f\n" % dt)
 infile.write("tf=\n%f\n" % tf)
 infile.write("teq=\n%i\n" % teq)
-infile.write("navg=\n%i\n" % navg)
+infile.write("Nt=\n%i\n" % Nt)
 infile.write("seed=\n%i\n" % seed)
 infile.write("name=\n" + name)
 
