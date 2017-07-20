@@ -50,13 +50,6 @@ int main(int argc, char *argv[])
 	// init deriv objec to perform integration
 	Deriv deriv(N,L,Dt,Dr,gamma,beta,eps,sigma,seed);
 
-	vector<double> pdtemp(N*(N-1));
-	pdtemp = pair_distances(r,L);
-	std::sort(pdtemp.begin(),pdtemp.end());
-	write_vec(pdtemp,"pd_init.dat");
-	return 0;
-
-
 	// equilibrate: integrate until teq
 	integrate(r,dr,p,dp,deriv,0,teq,dt);
 
