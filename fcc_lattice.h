@@ -15,6 +15,7 @@ void init_r_fcc(std::vector<std::vector<double> >& r,
 	// l : lattice const.
 	double l = L/n;
 
+
 	// xi,yi,zi: vector pointing to the point on the lattice block
 	// closest to (0,0,0)
 	double zi = 0;
