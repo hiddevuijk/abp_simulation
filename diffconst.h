@@ -27,6 +27,17 @@ double get_dR(const std::vector<double> & delta_r)
 	return dR;
 }
 */
+double dist_sq(const std::vector<double>& a,
+	const std::vector<double>& b)
+{
+	double d = 0;
+	d += (a[0]-b[0])*(a[0]-b[0]);
+	d += (a[1]-b[1])*(a[1]-b[1]);
+	d += (a[2]-b[2])*(a[2]-b[2]);
+
+	return d;
+}
+
 double get_dR(const std::vector<std::vector<double> >& r,
 	const std::vector<std::vector<double> >& r0)
 {
