@@ -10,7 +10,7 @@ using namespace std;
 
 void read_variables_pairdist(int& N,double& rho, double& Dt,double& Dr,double& gamma,
 	double& beta,double& eps,double& sigma,double& dt,
-	double& tf,double& teq, int& navg, int& seed,
+	double& tf,double& teq, int& navg,double& bs, int& seed,
 	std::string& name,std::string fileName)
 {
 	std::string temp;
@@ -40,6 +40,8 @@ void read_variables_pairdist(int& N,double& rho, double& Dt,double& Dr,double& g
 	infile >> teq;
 	infile >> temp;
 	infile >> navg;
+	infile >> temp;
+	infile >> bs;
 	infile >> temp;
 	infile >> seed;
 	infile >>temp;

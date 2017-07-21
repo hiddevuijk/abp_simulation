@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 	int N, seed;
 	double Dt,Dr,gamma,beta,eps,sigma,L,dt,tf,teq;
 	double rho;
+	double bs;	// binsize for g(r)
 	// name of the output file
 	string name;
 
@@ -33,12 +34,23 @@ int main(int argc, char *argv[])
 	}
 
 	// read variables from input file
-	read_variables_pairdist(N,rho,Dt,Dr,gamma,beta,eps,sigma,dt,tf,teq,navg,seed,name,input_name);
+	read_variables_pairdist(N,rho,Dt,Dr,gamma,beta,eps,sigma,dt,tf,teq,navg,bs,seed,name,input_name);
 	L = pow(N/rho,1./3);
-	int ndist = navg*N*(N-1)/2;
 
-	vector<double> pdist(ndist);
+
+	// vec with distances between particles at snapshot time
 	vector<double> pdist_temp(N*(N-1)/2);
+
+
+	int Ngr = ceil(L/bs);
+	vector<double> g(Ngr,0.0);
+	vector<double> g_temp(Ngr,0.0);
+	// gr contains the 'x' values of g(r), shift -bs in the end
+	// to get centers of bins.
+	vector<double> gr(Ngr);
+	for(int i=0;i<Ngr;++i)
+		gr[i] = (i+1)*bs;
+
 	vector<vector<double> > r(N,vector<double>(3));
 	vector<vector<double> > dr(N,vector<double>(3));
 	vector<vector<double> > p(N,vector<double>(3));
@@ -53,13 +65,22 @@ int main(int argc, char *argv[])
 	// equilibrate: integrate until teq
 	integrate(r,dr,p,dp,deriv,0,teq,dt);
 
+
+
 	for( int n =0;n<navg;n++) {
 		integrate(r,dr,p,dp,deriv,0,tf,dt);
 		pdist_temp = pair_distances(r,L);
-		for(int i =0;i<N*(N-1)/2;++i)
-			pdist[i+n*N*(N-1)/2] = pdist_temp[i];
+		g_temp = pd2g(pdist_temp,gr,N,rho);
+		for(int i=0;i<Ngr;++i)
+			g[i] += g_temp[i]/navg;	
 	}
-	std::sort(pdist.begin(),pdist.end());
-	write_vec(pdist,"pdist.dat");
+
+	// shift gr with -bs to get centers of bins
+	for(int i=0;i<Ngr;++i)
+		gr[i] -= 0.5*bs;
+
+	write_vec(g,"g.dat");
+	write_vec(gr,"gr.dat");
+
 	return 0;
 }
