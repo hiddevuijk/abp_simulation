@@ -103,6 +103,9 @@ int main(int argc, char *argv[])
 		}
 		add2result(vhove,vhove_temp,navg);
 	}
+	// devide vhove by 4*pi*dr*r^2
+	normalize_vh(vhove,r_vh);
+
 	if(name != "") name += '_';
 	write_vec(r_vh,name+"r.dat");
 	write_vec(t_vh,name+"t.dat");

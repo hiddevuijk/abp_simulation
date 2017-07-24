@@ -5,6 +5,11 @@
 #include <math.h>
 
 
+
+namespace VH{
+	double pi = acos(-1.);
+}
+
 void get_vhove(std::vector<double>& vhove_ti,
 	const std::vector<std::vector<double> >& r,
 	const std::vector<std::vector<double> >& r0,
@@ -39,6 +44,27 @@ void add2result(std::vector<std::vector<double> >& vhove,
 		}
 	}
 }
+
+void normalize_vh(std::vector<std::vector<double> >& vhove,
+	const std::vector<double>& r)
+{
+	double dr = r[1] - r[0];
+	int Nt_vh = vhove.size();
+	int Nr_vh = vhove[0].size();
+	double norm;
+	for(int ti = 0;ti<Nt_vh;++ti) {
+		for(int ri=0;ri<Nr_vh;++ri) {
+			norm = r[ri]*r[ri]*dr*4*VH::pi;
+			vhove[ti][ri] /= norm;
+		}
+	}
+}
+
+
+
+
+
+
 
 
 
