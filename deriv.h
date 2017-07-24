@@ -67,7 +67,7 @@ struct Deriv {
 double Deriv::f(const double& r)
 {
 	double sr6 = pow(sigma/r,6.);
-	return eps*(12*sr6*sr6-6*sr6)/(r*beta);
+	return eps*(48.*sr6*sr6-24*sr6)/(r*beta);
 }
 
 void Deriv::update_F(
