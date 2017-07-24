@@ -7,6 +7,50 @@
 
 using namespace std;
 
+void read_variables_vhove(int& N,double& rho, double& Dt,double& Dr,double& gamma,
+	double& beta,double& eps,double& sigma,double& dt,double& dt_vh, double& tm,
+	double& dr_vh, double& rm,double& teq,int& navg, int& seed,
+	std::string& name,std::string fileName)
+{
+	std::string temp;
+	std::ifstream infile(fileName);
+
+	infile >>temp;
+	infile >> N;
+	infile >> temp;
+	infile >> rho;
+	infile >>temp;
+	infile >> Dt;
+	infile >>temp;
+	infile >> Dr;
+	infile >>temp;
+	infile >> gamma;
+	infile >>temp;
+	infile >> beta;
+	infile >>temp;
+	infile >> eps;
+	infile >>temp;
+	infile >> sigma;
+	infile >>temp;
+	infile >> dt;
+	infile >>temp;
+	infile >> dt_vh;
+	infile >>temp;
+	infile >> tm;
+	infile >> temp;
+	infile >> dr_vh;
+	infile >> temp;
+	infile >> rm;
+	infile >> temp;
+	infile >> teq;
+	infile >> temp;
+	infile >> navg;
+	infile >> temp;
+	infile >> seed;
+	infile >>temp;
+	infile >> name;
+	
+}
 
 void read_variables_pairdist(int& N,double& rho, double& Dt,double& Dr,double& gamma,
 	double& beta,double& eps,double& sigma,double& dt,

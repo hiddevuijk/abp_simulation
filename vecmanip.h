@@ -149,7 +149,7 @@ void write_vec(std::vector<int> v,std::string fileName, int N = 0)
 
 
 void write_mat(const std::vector<std::vector<double> >& m,int nv,
-	int nelem, const char outname[], char sep1 = '\n',char sep2 = ';')
+	int nelem, std::string outname, char sep1 = '\n',char sep2 = ';')
 {
 
 	std::ofstream out;
