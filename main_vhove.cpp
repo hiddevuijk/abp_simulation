@@ -60,9 +60,10 @@ int main(int argc, char *argv[])
 	vector<double> t_vh(Nt_vh,0.0);
 	vector<double> r_vh(Nr_vh,0.0);
 	for(int i=0;i<Nt_vh;++i)
-		t_vh[i] = i*dt_vh;
+		t_vh[i] = (i+1)*dt_vh;
+	// r_vh contains the right values of the bins
 	for(int i=0;i<Nr_vh;++i)
-		r_vh[i] = (0.5+i)*dr_vh;
+		r_vh[i] = (i+1)*dr_vh;
 
 	Deriv deriv(N,L,Dt,Dr,gamma,beta,eps,sigma,seed);
 
@@ -86,8 +87,6 @@ int main(int argc, char *argv[])
 	// initial position vectors
 	vector<vector<double> > r0 = r;
 
-	// traveld distances at an instance of time, compared to r0
-	//vector<double> delta_r(N);
 
 	// Van Hove result
 	vector<vector<double> > vhove(Nt_vh,vector<double>(Nr_vh,0.0));
@@ -103,9 +102,13 @@ int main(int argc, char *argv[])
 		}
 		add2result(vhove,vhove_temp,navg);
 	}
+	// shift r_vh with -0.5*dr_vh to get mid points of the bins
+	for(int i=0;i<r_vh.size();++i)
+		r_vh[i] -= 0.5*dr_vh;
+
+
 	// devide vhove by 4*pi*dr*r^2
 	normalize_vh(vhove,r_vh);
-
 	if(name != "") name += '_';
 	write_vec(r_vh,name+"r.dat");
 	write_vec(t_vh,name+"t.dat");
