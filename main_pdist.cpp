@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 	// shift gr with -bs to get centers of bins
 	for(int i=0;i<Ngr;++i)
 		gr[i] -= 0.5*bs;
-
+	normalize_g(g,gr,rho,N);
 	write_vec(g,"g.dat");
 	write_vec(gr,"gr.dat");
 

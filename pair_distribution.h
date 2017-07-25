@@ -45,26 +45,26 @@ std::vector<double> pd2g(
 	int Ng = gr.size();
 	std::vector<double> g(Ng,0.0);
 	double bs = gr[1] - gr[0];
-	int pdi = 0;
-	for(int gi=0;gi<Ng;++gi) {
-		while(pd[pdi]< gr[gi] ) {
-			g[gi] += 1;
-			pdi += 1;
-			if(pdi>=Npd) break;
-		}
-		if(pdi>=Npd) break;
+	int j;
+	for(int i=0;i<Npd;++i) {
+		j = floor(pd[i]/bs);
+		if(j<Ng) g[j] += (N-1.)/Npd;
+		else g[Ng-1] += (N-1.)/Npd;
 	}
-	for(int i=0;i<Ng;++i) {
-		// devide by 4 pi r^2
-		g[i] /= rho*4*PD::pi*(gr[i]-bs)*(gr[i]-bs)*bs;
-		g[i] /= Npd;
-		g[i] *= N;
-	}
+
 	return g;
 }
 
 
-
+void normalize_g(std::vector<double>& g,
+	const std::vector<double>& gr,
+	double rho, int N)
+{
+	for(int i=0;i<g.size();++i){
+		// devide by rho*4*pi*r^2*dr
+		g[i] /= rho*4*PD::pi*gr[i]*gr[i]*(gr[1]-gr[0]);
+	}
+}
 
 
 
