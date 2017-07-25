@@ -50,6 +50,29 @@ double get_dR(const std::vector<std::vector<double> >& r,
 }
 
 
+get_dRxyz(double& dRx, double& dRy, double& dRz,
+	const std::vector<std::vector<double> >& r,
+	const std::vector<std::vector<double> >& r0)
+{
+	int N = r.size();
+	dRx = 0;
+	dRy = 0;
+	dRz = 0;
+	double temp;
+	for(int i=0;i<N;++i) {
+		dRx += (r[i][0] - r0[i][0])*(r[i][0] - r0[i][0]);
+		dRy += (r[i][1] - r0[i][1])*(r[i][1] - r0[i][1]);
+		dRz += (r[i][2] - r0[i][2])*(r[i][2] - r0[i][2]);
+
+	}
+	dRx /= N;
+	dRy /= N;
+	dRz /= N;
+
+}	
+
+
+
 
 
 
