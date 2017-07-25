@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 		integrate(r,dr,p,dp,deriv,0,tf,dt);
 
 		// calculate <(r(t=ti*tf)-r(t=t0))^2> 
-		get_dRxyz(dRx,dRy,dRz,r,r0);
+		get_dRxyz(dRx[ti],dRy[ti],dRz[ti],r,r0);
 	}
 
 	write_vec(dRx,name+".dat",Nt);	

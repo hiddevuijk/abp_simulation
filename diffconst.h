@@ -50,7 +50,7 @@ double get_dR(const std::vector<std::vector<double> >& r,
 }
 
 
-get_dRxyz(double& dRx, double& dRy, double& dRz,
+void get_dRxyz(double& dRx, double& dRy, double& dRz,
 	const std::vector<std::vector<double> >& r,
 	const std::vector<std::vector<double> >& r0)
 {
