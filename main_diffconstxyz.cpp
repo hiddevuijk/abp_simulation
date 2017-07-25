@@ -66,18 +66,27 @@ int main(int argc, char *argv[])
 	vector<double> dRx(Nt);
 	vector<double> dRy(Nt);
 	vector<double> dRz(Nt);
+	vector<double> dRxy(Nt);
+	vector<double> dRxz(Nt);
+	vector<double> dRyz(Nt);
+
 
 	
 	for( int ti =0;ti<Nt;ti++) {
 		integrate(r,dr,p,dp,deriv,0,tf,dt);
 
 		// calculate <(r(t=ti*tf)-r(t=t0))^2> 
-		get_dRxyz(dRx[ti],dRy[ti],dRz[ti],r,r0);
+		get_dRxyz(dRx[ti],dRy[ti],dRz[ti],
+			dRxy[ti],dRxz[ti],dRyz[ti],r,r0);
 	}
 
-	write_vec(dRx,name+".dat",Nt);	
-	write_vec(dRy,name+".dat",Nt);	
-	write_vec(dRz,name+".dat",Nt);	
+	write_vec(dRx,name+"_x.dat",Nt);	
+	write_vec(dRy,name+"_y.dat",Nt);	
+	write_vec(dRz,name+"z.dat",Nt);	
+	write_vec(dRxy,name+"_xy.dat",Nt);	
+	write_vec(dRxz,name+"_xz.dat",Nt);	
+	write_vec(dRyz,name+"_yz.dat",Nt);	
+
 
 
 
