@@ -66,8 +66,8 @@ void get_vhovexyz(std::vector<double>& vhovex_ti,
 
 		dz = fabs(r[i][2]-r0[i][2]);
 		jz = floor(dz/dr_vh);
-		if(jy<Nr_vh) vhovex_ti[jy] += 1./N;
-		else vhovey_ti[Nr_vh-1] += 1./N;
+		if(jz<Nr_vh) vhovez_ti[jz] += 1./N;
+		else vhovez_ti[Nr_vh-1] += 1./N;
 
 	}
 
