@@ -11,17 +11,15 @@ void orientation(const std::vector<std::vector<double> >& r,
 {
 	int N = r.size();
 	int j;
-
+	double x;
 	for(int i=0;i<N;++i) {
-		j = floor(r[i][xyz]/dr);
+		x -= L*round(r[i][xyz]/L);
+		j = floor(x/dr);
 		pAvg[j][0] += p[i][0]/N;
 		pAvg[j][1] += p[i][1]/N;
 		pAvg[j][2] += p[i][2]/N;
 	}
 }
-
-
-
 
 
 
