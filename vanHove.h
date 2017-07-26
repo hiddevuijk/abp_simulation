@@ -47,6 +47,12 @@ void get_vhovexyz(std::vector<double>& vhovex_ti,
 	double dx,dy,dz;
 	int N = r.size();
 	int jx,jy,jz;
+
+	// clear vhove{x,y,z}_ti
+	std::fill(vhovex_ti.begin(),vhovex_ti.end(),0.0);
+	std::fill(vhovey_ti.begin(),vhovey_ti.end(),0.0);
+	std::fill(vhovez_ti.begin(),vhovez_ti.end(),0.0);
+
 	for(int i=0;i<N;++i) {
 		dx = fabs(r[i][0]-r0[i][0]);
 		jx = floor(dx/dr_vh);
