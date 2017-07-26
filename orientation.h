@@ -4,25 +4,21 @@
 
 #include <vector>
 
-
-std::vector<double> orientation(const std::vector<std::vector<double> >& p)
+void orientation(const std::vector<std::vector<double> >& r,
+	const std::vector<std::vector<double> >& p,
+	std::vector<std::vector<double> >& pAvg,
+	int xyz, double dr)
 {
+	int N = r.size();
+	int j;
 
-	int N = p.size();
-	std::vector<double> pAvg(3,0.0);
 	for(int i=0;i<N;++i) {
-		pAvg[0] += p[i][0];
-		pAvg[1] += p[i][1];
-		pAvg[2] += p[i][2];
+		j = floor(r[i][xyz]/dr);
+		pAvg[j][0] += p[i][0]/N;
+		pAvg[j][1] += p[i][1]/N;
+		pAvg[j][2] += p[i][2]/N;
 	}
-	pAvg[0] /= N;
-	pAvg[1] /= N;
-	pAvg[2] /= N;
-
-	return pAvg;
 }
-
-
 
 
 
