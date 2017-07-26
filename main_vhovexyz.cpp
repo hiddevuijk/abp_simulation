@@ -117,9 +117,9 @@ int main(int argc, char *argv[])
 	if(name != "") name += '_';
 	write_vec(r_vh,name+"r.dat");
 	write_vec(t_vh,name+"t.dat");
-	write_mat(vhovex,Nt_vh,Nr_vh,name+"vhove.dat");
-	write_mat(vhovey,Nt_vh,Nr_vh,name+"vhove.dat");
-	write_mat(vhovez,Nt_vh,Nr_vh,name+"vhove.dat");
+	write_mat(vhovex,Nt_vh,Nr_vh,name+"vhove_x.dat");
+	write_mat(vhovey,Nt_vh,Nr_vh,name+"vhove_y.dat");
+	write_mat(vhovez,Nt_vh,Nr_vh,name+"vhove_z.dat");
 
 
 
