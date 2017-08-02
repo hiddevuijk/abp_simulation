@@ -7,7 +7,7 @@
 void orientation(const std::vector<std::vector<double> >& r,
 	const std::vector<std::vector<double> >& p,
 	std::vector<std::vector<double> >& pAvg,
-	int xyz, double dr)
+	int xyz, double dr,double L)
 {
 	int N = r.size();
 	int j;
