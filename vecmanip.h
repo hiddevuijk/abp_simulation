@@ -179,6 +179,19 @@ void rand_vecs(std::vector<std::vector<double> >& r,
 	}
 }
 
+double maxMat(const std::vector<std::vector<double> >& mat)
+{
+
+	double max = mat[0][0];
+	for(int i=0;i<mat.size();++i) {
+		for(int j=0;j<mat[i].size();++j) {
+			if(mat[i][j] > max) max = mat[i][j];
+		}
+	}
+	return max;
+}
+
+
 
 
 #endif
