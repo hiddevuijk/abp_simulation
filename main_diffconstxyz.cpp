@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 
 	write_vec(dRx,name+"_x.dat",Nt);	
 	write_vec(dRy,name+"_y.dat",Nt);	
-	write_vec(dRz,name+"z.dat",Nt);	
+	write_vec(dRz,name+"_z.dat",Nt);	
 	write_vec(dRxy,name+"_xy.dat",Nt);	
 	write_vec(dRxz,name+"_xz.dat",Nt);	
 	write_vec(dRyz,name+"_yz.dat",Nt);	
