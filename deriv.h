@@ -28,7 +28,7 @@ struct Deriv {
 			std::vector<std::vector<double> >& dr,
 			std::vector<std::vector<double> >& p,
 			std::vector<std::vector<double> >& dp,
-			double dt);
+			double dt,bool err, double maxForce);
 
 	int get_N() { return N;}
 	double get_L() { return L;}
@@ -112,36 +112,49 @@ void Deriv::operator() (
 		std::vector<std::vector<double> >& dr,
 		std::vector<std::vector<double> >& p,
 		std::vector<std::vector<double> >& dp,
-		double dt)
+		double dt,bool err, double maxForce)
 {
 
 	double sqrt_dt = std::sqrt(dt);
 	double etaX, etaY, etaZ;
-	update_F(r);
-	for(int i=0;i<N;++i) {
+	if(err) {
+		dt = 0.5*sigma/maxForce;
+		maxForce *= 0.5*sigma/dt;
+	} else {
+		update_F(r);
+		maxForce = maxMat(F);
+	}
 
-		//check if forces do not exceed critical value			
-		assert(abs(F[i][0])*dt<sigma);
-		assert(abs(F[i][1])*dt<sigma);
-		assert(abs(F[i][2])*dt<sigma);
+	if(maxForce*dt>sigma) {
+		err = true;
+	} else {
+		err = false;
+		
+		for(int i=0;i<N;++i) {
 
-		// calculate r increment
-		dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
-		dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
-		dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
-		add_to(r[i],dr[i]);
+			//check if forces do not exceed critical value			
+			assert(abs(F[i][0])*dt<sigma);
+			assert(abs(F[i][1])*dt<sigma);
+			assert(abs(F[i][2])*dt<sigma);
 
-		/*
-		// calculate p increment
-		etaX = ndist(generator)*sqrt_dt*sqrt_2Dr;
-		etaY = ndist(generator)*sqrt_dt*sqrt_2Dr;
-		etaZ = ndist(generator)*sqrt_dt*sqrt_2Dr;
-		dp[i][0] = (etaY*p[i][2] - etaZ*p[i][1]);
-		dp[i][1] = (etaZ*p[i][0] - etaX*p[i][2]);
-		dp[i][2] = (etaX*p[i][1] - etaY*p[i][0]);
-		add_to(p[i],dp[i]);
-		normalize(p[i]);
-		*/
+			// calculate r increment
+			dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
+			dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
+			dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
+			add_to(r[i],dr[i]);
+
+			/*
+			// calculate p increment
+			etaX = ndist(generator)*sqrt_dt*sqrt_2Dr;
+			etaY = ndist(generator)*sqrt_dt*sqrt_2Dr;
+			etaZ = ndist(generator)*sqrt_dt*sqrt_2Dr;
+			dp[i][0] = (etaY*p[i][2] - etaZ*p[i][1]);
+			dp[i][1] = (etaZ*p[i][0] - etaX*p[i][2]);
+			dp[i][2] = (etaX*p[i][1] - etaY*p[i][0]);
+			add_to(p[i],dp[i]);
+			normalize(p[i]);
+			*/
+		}
 	}
 }
 
