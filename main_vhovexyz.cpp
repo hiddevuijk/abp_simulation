@@ -26,6 +26,8 @@ int main(int argc, char *argv[])
 	double L;
 	// diff consts
 	double Dt,Dr;
+	// swim speed
+	double v0;
 	//porential parameters
 	double gamma, beta, sigma,eps;
 	// Van Hove parameters
@@ -51,7 +53,7 @@ int main(int argc, char *argv[])
 	}
 
 	// read variables from input file
-	read_variables_vhove(N,rho,Dt,Dr,gamma,beta,eps,sigma,dt,dt_vh,tm,dr_vh,rm,teq,navg,seed,name,input_name);
+	read_variables_vhove(N,rho,Dt,Dr,v0,gamma,beta,eps,sigma,dt,dt_vh,tm,dr_vh,rm,teq,navg,seed,name,input_name);
 	L = pow(N/rho,1./3);
 	Nt_vh = tm/dt_vh+1;
 	Nr_vh = rm/dr_vh+1;
@@ -64,7 +66,7 @@ int main(int argc, char *argv[])
 	for(int i=0;i<Nr_vh;++i)
 		r_vh[i] = (i+1)*dr_vh;
 
-	Deriv deriv(N,L,Dt,Dr,gamma,beta,eps,sigma,seed);
+	Deriv deriv(N,L,Dt,Dr,v0,gamma,beta,eps,sigma,seed);
 
 	default_random_engine gen(seed);
 

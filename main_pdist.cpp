@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
 	int navg;
 	int N, seed;
-	double Dt,Dr,gamma,beta,eps,sigma,L,dt,tf,teq;
+	double Dt,Dr,v0,gamma,beta,eps,sigma,L,dt,tf,teq;
 	double rho;
 	double bs;	// binsize for g(r)
 	// name of the output file
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 	}
 
 	// read variables from input file
-	read_variables_pairdist(N,rho,Dt,Dr,gamma,beta,eps,sigma,dt,tf,teq,navg,bs,seed,name,input_name);
+	read_variables_pairdist(N,rho,Dt,Dr,v0,gamma,beta,eps,sigma,dt,tf,teq,navg,bs,seed,name,input_name);
 	L = pow(N/rho,1./3);
 
 
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	init_r_fcc(r,N,sigma,L);
 
 	// init deriv objec to perform integration
-	Deriv deriv(N,L,Dt,Dr,gamma,beta,eps,sigma,seed);
+	Deriv deriv(N,L,Dt,Dr,v0,gamma,beta,eps,sigma,seed);
 
 	// equilibrate: integrate until teq
 	integrate(r,dr,p,dp,deriv,0,teq,dt);

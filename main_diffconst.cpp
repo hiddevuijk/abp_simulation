@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
 	int Nt;
 	int N, seed;
-	double Dt,Dr,gamma,beta,eps,sigma,L,dt,tf,teq;
+	double Dt,Dr,v0,gamma,beta,eps,sigma,L,dt,tf,teq;
 	double rho;
 	// name of the output file
 	string name;
@@ -33,11 +33,11 @@ int main(int argc, char *argv[])
 	}
 
 	// read variables from input file
-	read_variables_diffconst(N,rho,Dt,Dr,gamma,beta,eps,sigma,dt,tf,teq,Nt,seed,name,input_name);
+	read_variables_diffconst(N,rho,Dt,Dr,v0,gamma,beta,eps,sigma,dt,tf,teq,Nt,seed,name,input_name);
 	L = pow(N/rho,1./3);
 
 
-	Deriv deriv(N,L,Dt,Dr,gamma,beta,eps,sigma,seed);
+	Deriv deriv(N,L,Dt,Dr,v0,gamma,beta,eps,sigma,seed);
 
 	default_random_engine gen(seed);
 

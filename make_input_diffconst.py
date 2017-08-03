@@ -1,6 +1,7 @@
 import numpy as np
 
 rho = .7
+v0 = 0.
 N = 100;
 T = 100; # end time in tau_b
 Nt = 100;
@@ -29,6 +30,7 @@ infile.write("N=\n%i\n" % N)
 infile.write("rho=\n%f\n" % rho)
 infile.write("Dt=\n%f\n" % Dt)
 infile.write("Dr=\n%f\n" % Dr)
+infile.write("v0=\n%f\n" % v0)
 infile.write("gamma=\n%f\n" % gamma)
 infile.write("beta=\n%f\n" % beta)
 infile.write("eps=\n%f\n" % eps)

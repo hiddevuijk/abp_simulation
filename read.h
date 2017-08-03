@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void read_variables_vhove(int& N,double& rho, double& Dt,double& Dr,double& gamma,
+void read_variables_vhove(int& N,double& rho, double& Dt,double& Dr,double& v0, double& gamma,
 	double& beta,double& eps,double& sigma,double& dt,double& dt_vh, double& tm,
 	double& dr_vh, double& rm,double& teq,int& navg, int& seed,
 	std::string& name,std::string fileName)
@@ -23,6 +23,8 @@ void read_variables_vhove(int& N,double& rho, double& Dt,double& Dr,double& gamm
 	infile >> Dt;
 	infile >>temp;
 	infile >> Dr;
+	infile >>temp;
+	infile >> v0;
 	infile >>temp;
 	infile >> gamma;
 	infile >>temp;
@@ -52,8 +54,8 @@ void read_variables_vhove(int& N,double& rho, double& Dt,double& Dr,double& gamm
 	
 }
 
-void read_variables_pairdist(int& N,double& rho, double& Dt,double& Dr,double& gamma,
-	double& beta,double& eps,double& sigma,double& dt,
+void read_variables_pairdist(int& N,double& rho, double& Dt,double& Dr,double& v0,
+	double& gamma,double& beta,double& eps,double& sigma,double& dt,
 	double& tf,double& teq, int& navg,double& bs, int& seed,
 	std::string& name,std::string fileName)
 {
@@ -68,6 +70,8 @@ void read_variables_pairdist(int& N,double& rho, double& Dt,double& Dr,double& g
 	infile >> Dt;
 	infile >>temp;
 	infile >> Dr;
+	infile >>temp;
+	infile >> v0;
 	infile >>temp;
 	infile >> gamma;
 	infile >>temp;
@@ -95,8 +99,8 @@ void read_variables_pairdist(int& N,double& rho, double& Dt,double& Dr,double& g
 
 
 
-void read_variables_diffconst(int& N,double& rho, double& Dt,double& Dr,double& gamma,
-	double& beta,double& eps,double& sigma,double& dt,
+void read_variables_diffconst(int& N,double& rho, double& Dt,double& Dr,double& v0,
+	double& gamma,double& beta,double& eps,double& sigma,double& dt,
 	double& tf,double& teq, int& Nt, int& seed,
 	std::string& name,std::string fileName)
 {
@@ -111,6 +115,8 @@ void read_variables_diffconst(int& N,double& rho, double& Dt,double& Dr,double& 
 	infile >> Dt;
 	infile >>temp;
 	infile >> Dr;
+	infile >>temp;
+	infile >> v0;
 	infile >>temp;
 	infile >> gamma;
 	infile >>temp;

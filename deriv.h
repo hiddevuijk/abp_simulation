@@ -8,15 +8,16 @@
 #include <random>
 #include <assert.h>
 #include "vecmanip.h"
-#include <iostream>
+
+
 struct Deriv {
 	public:
 
-	Deriv(int NN, double LL, double Dtt, double Drr,double gammaa,
+	Deriv(int NN, double LL, double Dtt, double Drr,double v00, double gammaa,
 			double betaa, double epss, double sigmaa, int seedd):
 			N(NN),L(LL), sqrt_2Dt(std::sqrt(2*Dtt)),
-			sqrt_2Dr(std::sqrt(2*Drr)), gamma(gammaa), beta(betaa),
-			eps(epss), sigma(sigmaa), seed(seedd),
+			sqrt_2Dr(std::sqrt(2*Drr)), v0(v00), gamma(gammaa),
+			beta(betaa), eps(epss), sigma(sigmaa), seed(seedd),
 			generator(seed),ndist(0.,1.),
 			F(N,std::vector<double>(3,0.))
 			{}
@@ -34,6 +35,7 @@ struct Deriv {
 	double get_L() { return L;}
 	double get_Dt() { return 0.5*sqrt_2Dt*sqrt_2Dt;}
 	double get_Dr() { return 0.5*sqrt_2Dr*sqrt_2Dr;}
+	double get_v0() { return v0;}
 	double get_beta() { return beta;}
 	double get_eps() { return eps;}
 	double get_sigma() {return sigma;}
@@ -46,6 +48,7 @@ struct Deriv {
 	double dt;
 	double sqrt_2Dt;	// sqrt(2*Dt)
 	double sqrt_2Dr;	// sqrt(2*Dr)
+	double v0;
 	double gamma;
 	double beta;
 	double eps;
@@ -63,6 +66,8 @@ struct Deriv {
 	std::default_random_engine generator;
 	std::normal_distribution<double> ndist;
 };
+
+
 
 double Deriv::f(const double& r)
 {
@@ -137,23 +142,32 @@ void Deriv::operator() (
 			assert(abs(F[i][1])*dt<sigma);
 			assert(abs(F[i][2])*dt<sigma);
 
-			// calculate r increment
-			dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
-			dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
-			dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
-			add_to(r[i],dr[i]);
+			
+			if( v0 > 0 ) {
+				// calculate r increment
+				dr[i][0] = v0*p[i][0]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
+				dr[i][1] = v0*p[i][1]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
+				dr[i][2] = v0*p[i][2]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
+				add_to(r[i],dr[i]);
 
-			/*
-			// calculate p increment
-			etaX = ndist(generator)*sqrt_dt*sqrt_2Dr;
-			etaY = ndist(generator)*sqrt_dt*sqrt_2Dr;
-			etaZ = ndist(generator)*sqrt_dt*sqrt_2Dr;
-			dp[i][0] = (etaY*p[i][2] - etaZ*p[i][1]);
-			dp[i][1] = (etaZ*p[i][0] - etaX*p[i][2]);
-			dp[i][2] = (etaX*p[i][1] - etaY*p[i][0]);
-			add_to(p[i],dp[i]);
-			normalize(p[i]);
-			*/
+				// calculate p increment
+				etaX = ndist(generator)*sqrt_dt*sqrt_2Dr;
+				etaY = ndist(generator)*sqrt_dt*sqrt_2Dr;
+				etaZ = ndist(generator)*sqrt_dt*sqrt_2Dr;
+				dp[i][0] = (etaY*p[i][2] - etaZ*p[i][1]);
+				dp[i][1] = (etaZ*p[i][0] - etaX*p[i][2]);
+				dp[i][2] = (etaX*p[i][1] - etaY*p[i][0]);
+				add_to(p[i],dp[i]);
+				normalize(p[i]);
+			} else {
+				// calculate r increment
+				dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
+				dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
+				dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
+				add_to(r[i],dr[i]);
+
+			}
+
 		}
 	}
 }
