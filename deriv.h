@@ -13,12 +13,15 @@
 struct Deriv {
 	public:
 
-	Deriv(int NN, double LL, double Dtt, double Drr,double v00, double gammaa,
-			double betaa, double epss, double sigmaa, int seedd):
+	Deriv(int NN, double LL, double Dtt, double Drr,
+			double vv, double omegaa,
+			double gammaa,double betaa, double epss, double sigmaa,
+			int seedd):
 			N(NN),L(LL), sqrt_2Dt(std::sqrt(2*Dtt)),
-			sqrt_2Dr(std::sqrt(2*Drr)), v0(v00), gamma(gammaa),
-			beta(betaa), eps(epss), sigma(sigmaa), seed(seedd),
-			generator(seed),ndist(0.,1.),
+			sqrt_2Dr(std::sqrt(2*Drr)), sqrt_dt(std::sqrt(dt)),
+			v(vv),omega(omegaa),
+			gamma(gammaa), beta(betaa), eps(epss), sigma(sigmaa),
+			seed(seedd), generator(seed),ndist(0.,1.),
 			F(N,std::vector<double>(3,0.))
 			{}
 
@@ -33,9 +36,11 @@ struct Deriv {
 
 	int get_N() { return N;}
 	double get_L() { return L;}
+	double get_dt() { return dt;}
 	double get_Dt() { return 0.5*sqrt_2Dt*sqrt_2Dt;}
 	double get_Dr() { return 0.5*sqrt_2Dr*sqrt_2Dr;}
-	double get_v0() { return v0;}
+	double get_v() { return v;}
+	double get_omega(){return omega;}
 	double get_beta() { return beta;}
 	double get_eps() { return eps;}
 	double get_sigma() {return sigma;}
@@ -48,7 +53,9 @@ struct Deriv {
 	double dt;
 	double sqrt_2Dt;	// sqrt(2*Dt)
 	double sqrt_2Dr;	// sqrt(2*Dr)
-	double v0;
+	double sqrt_dt;
+	double v;
+	double omega;
 	double gamma;
 	double beta;
 	double eps;
@@ -61,6 +68,10 @@ struct Deriv {
 	void update_F(const std::vector<std::vector<double> >& r);
 	// force between two particles
 	double f(const double&);
+
+	//position dependent activity
+	double v0(const std::vector<double>& ri, double v, double omega);
+
 
 	// random number generator
 	std::default_random_engine generator;
@@ -110,6 +121,12 @@ void Deriv::update_F(
 	}
 }
 
+double Deriv::v0(const std::vector<double>& ri, double v, double omega)
+{
+	return v*std::sin(omega*ri[2]);
+}
+
+
 // The () operator calculates the increment in r and p (dr and dp) at r,p
 // for a time increment dt and adds it to r and p
 void Deriv::operator() (
@@ -120,8 +137,8 @@ void Deriv::operator() (
 		double dt,bool err, double maxForce)
 {
 
-	double sqrt_dt = std::sqrt(dt);
-	double etaX, etaY, etaZ;
+	double etaX, etaY, etaZ;	// random numbers for the orientation vector
+	double vi;	// position dep. swim velocity
 	if(err) {
 		dt = 0.5*sigma/maxForce;
 		maxForce *= 0.5*sigma/dt;
@@ -143,11 +160,12 @@ void Deriv::operator() (
 			assert(abs(F[i][2])*dt<sigma);
 
 			
-			if( v0 > 0 ) {
+			if( v > 0 ) {
+				vi = v0(r[i],v,omega);
 				// calculate r increment
-				dr[i][0] = v0*p[i][0]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
-				dr[i][1] = v0*p[i][1]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
-				dr[i][2] = v0*p[i][2]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
+				dr[i][0] = vi*p[i][0]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
+				dr[i][1] = vi*p[i][1]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
+				dr[i][2] = vi*p[i][2]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
 				add_to(r[i],dr[i]);
 
 				// calculate p increment
