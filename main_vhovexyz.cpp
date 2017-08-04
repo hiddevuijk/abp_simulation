@@ -73,8 +73,8 @@ int main(int argc, char *argv[])
 
 	vector<vector<double> > r(N,vector<double>(3));
 	vector<vector<double> > dr(N,vector<double>(3));
-	vector<vector<double> > p(N,vector<double>(3));
-	vector<vector<double> > dp(N,vector<double>(3));
+	vector<vector<double> > p(N,vector<double>(3,1.));
+	vector<vector<double> > dp(N,vector<double>(3,1.));
 
 	// start with random p(t=0)
 	rand_vecs(p,N,3,-.5*L,.5*L,gen,1.);
