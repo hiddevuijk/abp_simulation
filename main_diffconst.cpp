@@ -33,11 +33,13 @@ int main(int argc, char *argv[])
 	}
 
 	// read variables from input file
-	read_variables_diffconst(N,rho,Dt,Dr,v0,gamma,beta,eps,sigma,dt,tf,teq,Nt,seed,name,input_name);
+	read_variables_diffconst(N,rho,Dt,Dr,v0,
+		gamma,beta,eps,sigma,
+		dt,tf,teq,Nt,seed,name,input_name);
 	L = pow(N/rho,1./3);
 
-
-	Deriv deriv(N,L,Dt,Dr,v0,gamma,beta,eps,sigma,seed);
+	// omega=0
+	Deriv deriv(N,L,Dt,Dr,v0,0,gamma,beta,eps,sigma,seed);
 
 	default_random_engine gen(seed);
 
