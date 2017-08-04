@@ -23,8 +23,10 @@ void orientation(const std::vector<std::vector<double> >& r,
 		pAvg[i][2] = 0;
 	}
 
+
 	for(int i=0;i<N;++i) {
-		x -= L*round(r[i][xyz]/L);
+
+		x = r[i][xyz] -  L*floor(r[i][xyz]/L);
 		j = floor(x/dr);
 		pAvg[j][0] += p[i][0];
 		pAvg[j][1] += p[i][1];
@@ -32,7 +34,6 @@ void orientation(const std::vector<std::vector<double> >& r,
 
 		++pAvgN[j];
 	}
-
 	//Divide pAvg[i] by the number of particles in the bin
 	for(int i=0;i<pAvg.size();++i) {
 		pAvg[i][0] /= pAvgN[i];
