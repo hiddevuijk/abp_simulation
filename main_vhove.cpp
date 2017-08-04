@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
 		r_vh[i] = (i+1)*dr_vh;
 
 
-	// the 0 is bc. of the position indep. of v0
-	Deriv deriv(N,L,Dt,Dr,v0,0,gamma,beta,eps,sigma,seed);
+	// omega = -1 -> v0 = v
+	Deriv deriv(N,L,Dt,Dr,v0,-1,gamma,beta,eps,sigma,seed);
 
 	default_random_engine gen(seed);
 

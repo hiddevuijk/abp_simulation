@@ -38,8 +38,8 @@ int main(int argc, char *argv[])
 			Nt,seed,name,input_name);
 	L = pow(N/rho,1./3);
 
-	// omega = 0
-	Deriv deriv(N,L,Dt,Dr,v0,gamma,beta,eps,sigma,seed);
+	// omega = -1 -> v0 = v
+	Deriv deriv(N,L,Dt,Dr,v0,-1,gamma,beta,eps,sigma,seed);
 
 	default_random_engine gen(seed);
 

@@ -161,7 +161,7 @@ void Deriv::operator() (
 
 			
 			if( v > 0 ) {
-				vi = v0(r[i],v,omega);
+				vi = omega > 0 ? v0(r[i],v,omega) : v;
 				// calculate r increment
 				dr[i][0] = vi*p[i][0]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
 				dr[i][1] = vi*p[i][1]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;

@@ -60,8 +60,8 @@ int main(int argc, char *argv[])
 	init_r_fcc(r,N,sigma,L);
 
 	// init deriv objec to perform integration
-	// the 0 bc. of the position indep. of v0
-	Deriv deriv(N,L,Dt,Dr,v0,0,gamma,beta,eps,sigma,seed);
+	// omega = -1 -> v0 = v
+	Deriv deriv(N,L,Dt,Dr,v0,-1,gamma,beta,eps,sigma,seed);
 
 	// equilibrate: integrate until teq
 	integrate(r,dr,p,dp,deriv,0,teq,dt);
