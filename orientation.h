@@ -36,9 +36,11 @@ void orientation(const std::vector<std::vector<double> >& r,
 	}
 	//Divide pAvg[i] by the number of particles in the bin
 	for(int i=0;i<pAvg.size();++i) {
-		pAvg[i][0] /= pAvgN[i];
-		pAvg[i][1] /= pAvgN[i];
-		pAvg[i][2] /= pAvgN[i];
+		if( pAvgN[i] > 0) {
+			pAvg[i][0] /= pAvgN[i];
+			pAvg[i][1] /= pAvgN[i];
+			pAvg[i][2] /= pAvgN[i];
+		}
 	}
 }
 
