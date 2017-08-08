@@ -14,12 +14,12 @@ struct Deriv {
 	public:
 
 	Deriv(int NN, double LL, double Dtt, double Drr,
-			double vv, double omegaa,
+			double vv, double qBB, double omegaa,
 			double gammaa,double betaa, double epss, double sigmaa,
 			int seedd):
 			N(NN),L(LL), sqrt_2Dt(std::sqrt(2*Dtt)),
-			sqrt_2Dr(std::sqrt(2*Drr)), sqrt_dt(std::sqrt(dt)),
-			v(vv),omega(omegaa),
+			sqrt_2Dr(std::sqrt(2*Drr)),
+			v(vv),qB(qBB),omega(omegaa),
 			gamma(gammaa), beta(betaa), eps(epss), sigma(sigmaa),
 			seed(seedd), generator(seed),ndist(0.,1.),
 			F(N,std::vector<double>(3,0.))
@@ -36,10 +36,10 @@ struct Deriv {
 
 	int get_N() { return N;}
 	double get_L() { return L;}
-	double get_dt() { return dt;}
 	double get_Dt() { return 0.5*sqrt_2Dt*sqrt_2Dt;}
 	double get_Dr() { return 0.5*sqrt_2Dr*sqrt_2Dr;}
 	double get_v() { return v;}
+	double get_qB() { return qB();}
 	double get_omega(){return omega;}
 	double get_beta() { return beta;}
 	double get_eps() { return eps;}
@@ -50,11 +50,10 @@ struct Deriv {
 	private:
 	int N;			// number of particles
 	double L;		// size of the box
-	double dt;
 	double sqrt_2Dt;	// sqrt(2*Dt)
 	double sqrt_2Dr;	// sqrt(2*Dr)
-	double sqrt_dt;
 	double v;
+	double qB;
 	double omega;
 	double gamma;
 	double beta;
@@ -69,9 +68,10 @@ struct Deriv {
 	// force between two particles
 	double f(const double&);
 
-	//position dependent activity
-	double v0(const std::vector<double>& ri, double v, double omega);
+	//position dependent magnetic field
+	double wc(const std::vector<double>& ri, double qB, double omega);
 
+	void Q(std::vector<double>& dri, double gamma, double wci);
 
 	// random number generator
 	std::default_random_engine generator;
@@ -121,9 +121,9 @@ void Deriv::update_F(
 	}
 }
 
-double Deriv::v0(const std::vector<double>& ri, double v, double omega)
+double Deriv::wc(const std::vector<double>& ri, double qB, double omega)
 {
-	return v*std::sin(omega*ri[2]);
+	return qB*std::sin(omega*ri[2]);
 }
 
 
@@ -137,8 +137,9 @@ void Deriv::operator() (
 		double dt,bool err, double maxForce)
 {
 
+	double sqrt_dt = std::sqrt(dt);
 	double etaX, etaY, etaZ;	// random numbers for the orientation vector
-	double vi;	// position dep. swim velocity
+	double wci;	// position dep. wc
 	if(err) {
 		dt = 0.5*sigma/maxForce;
 		maxForce *= 0.5*sigma/dt;
@@ -161,11 +162,14 @@ void Deriv::operator() (
 
 			
 			if( v > 0 ) {
-				vi = omega > 0 ? v0(r[i],v,omega) : v;
 				// calculate r increment
-				dr[i][0] = vi*p[i][0]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
-				dr[i][1] = vi*p[i][1]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
-				dr[i][2] = vi*p[i][2]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
+				dr[i][0] = v*p[i][0]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
+				dr[i][1] = v*p[i][1]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
+				dr[i][2] = v*p[i][2]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
+				if(qB>0) {
+					wci = omega > 0 ? wc(r[i],qB,omega) : qB;
+					Q(dr[i],gamma,wci);
+				}
 				add_to(r[i],dr[i]);
 
 				// calculate p increment
@@ -185,6 +189,10 @@ void Deriv::operator() (
 				dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
 				dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
 				dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
+				if(qB>0) {
+					wci = omega > 0 ? wc(r[i],qB,omega) : qB;
+					Q(dr[i],gamma,wci);
+				}
 				add_to(r[i],dr[i]);
 
 			}
@@ -192,5 +200,7 @@ void Deriv::operator() (
 		}
 	}
 }
+
+
 
 #endif
