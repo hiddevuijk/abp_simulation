@@ -62,14 +62,11 @@ int main(int argc, char *argv[])
 	// init deriv objec to perform integration
 	// omega = -1 -> v0 = v
 	Deriv deriv(N,L,Dt,Dr,v0,-1,gamma,beta,eps,sigma,seed);
-	cout << dt << endl;
-	cout << sqrt(dt) << endl << endl;
 
 
 	// equilibrate: integrate until teq
 	integrate(r,dr,p,dp,deriv,0,teq,dt);
 
-	return 0;
 
 
 	for( int n =0;n<navg;n++) {
