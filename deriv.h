@@ -9,6 +9,7 @@
 #include <assert.h>
 #include "vecmanip.h"
 
+#include <iostream>
 
 struct Deriv {
 	public:
@@ -18,7 +19,7 @@ struct Deriv {
 			double gammaa,double betaa, double epss, double sigmaa,
 			int seedd):
 			N(NN),L(LL), sqrt_2Dt(std::sqrt(2*Dtt)),
-			sqrt_2Dr(std::sqrt(2*Drr)), sqrt_dt(std::sqrt(dt)),
+			sqrt_2Dr(std::sqrt(2*Drr)),
 			v(vv),omega(omegaa),
 			gamma(gammaa), beta(betaa), eps(epss), sigma(sigmaa),
 			seed(seedd), generator(seed),ndist(0.,1.),
@@ -36,7 +37,6 @@ struct Deriv {
 
 	int get_N() { return N;}
 	double get_L() { return L;}
-	double get_dt() { return dt;}
 	double get_Dt() { return 0.5*sqrt_2Dt*sqrt_2Dt;}
 	double get_Dr() { return 0.5*sqrt_2Dr*sqrt_2Dr;}
 	double get_v() { return v;}
@@ -53,7 +53,6 @@ struct Deriv {
 	double dt;
 	double sqrt_2Dt;	// sqrt(2*Dt)
 	double sqrt_2Dr;	// sqrt(2*Dr)
-	double sqrt_dt;
 	double v;
 	double omega;
 	double gamma;
@@ -136,7 +135,7 @@ void Deriv::operator() (
 		std::vector<std::vector<double> >& dp,
 		double dt,bool err, double maxForce)
 {
-
+	double sqrt_dt = std::sqrt(dt);
 	double etaX, etaY, etaZ;	// random numbers for the orientation vector
 	double vi;	// position dep. swim velocity
 	if(err) {
@@ -168,6 +167,8 @@ void Deriv::operator() (
 				dr[i][2] = vi*p[i][2]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
 				add_to(r[i],dr[i]);
 
+
+
 				// calculate p increment
 				etaX = ndist(generator)*sqrt_dt*sqrt_2Dr;
 				etaY = ndist(generator)*sqrt_dt*sqrt_2Dr;
@@ -175,7 +176,6 @@ void Deriv::operator() (
 				dp[i][0] = (etaY*p[i][2] - etaZ*p[i][1]);
 				dp[i][1] = (etaZ*p[i][0] - etaX*p[i][2]);
 				dp[i][2] = (etaX*p[i][1] - etaY*p[i][0]);
-
 				add_to(p[i],dp[i]);
 
 				normalize(p[i]);
