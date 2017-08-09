@@ -4,14 +4,13 @@
 
 #include <vector>
 
-#include "deriv.h"
-
-
+//#include "deriv.h"
+template <typename Deriv_object>
 void integrate(std::vector<std::vector<double> >& r,
 	std::vector<std::vector<double> >& dr,
 	std::vector<std::vector<double> >& p,
 	std::vector<std::vector<double> >& dp,
-	Deriv& deriv, double ti, double tf, double dtmax)
+	Deriv_object& deriv, double ti, double tf, double dtmax)
 {
 	bool err = false;	// true if F*dt>sigma
 	double maxForce;
