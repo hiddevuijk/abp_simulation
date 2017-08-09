@@ -42,7 +42,6 @@ int main(int argc, char *argv[])
 	// omega = omega0 2 pi / L
 	double omega = omega0*2*acos(-1)/L;
 
-
 	int NpAvg = ceil(L/bs_pAvg);
 	vector<vector<double> > pAvgx_temp(NpAvg,vector<double>(3,0.0));
 	vector<vector<double> > pAvgy_temp(NpAvg,vector<double>(3,0.0));
@@ -51,6 +50,7 @@ int main(int argc, char *argv[])
 	vector<vector<double> > pAvgy(NpAvg,vector<double>(3,0.0));
 	vector<vector<double> > pAvgz(NpAvg,vector<double>(3,0.0));
 	vector<double> pAvg_bins(NpAvg,0.0);
+
 	for(int i=0;i<NpAvg;++i)
 		pAvg_bins[i] = (i+1)*bs_pAvg;
 
