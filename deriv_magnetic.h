@@ -21,7 +21,7 @@ struct Deriv {
 			sqrt_2Dr(std::sqrt(2*Drr)),
 			v(vv),qB(qBB),omega(omegaa),
 			gamma(gammaa), beta(betaa), eps(epss), sigma(sigmaa),
-			seed(seedd), generator(seed),ndist(0.,1.),
+			sigma6(pow(sigma,6.)),seed(seedd), generator(seed),ndist(0.,1.),
 			F(N,std::vector<double>(3,0.))
 			{}
 
@@ -39,7 +39,7 @@ struct Deriv {
 	double get_Dt() { return 0.5*sqrt_2Dt*sqrt_2Dt;}
 	double get_Dr() { return 0.5*sqrt_2Dr*sqrt_2Dr;}
 	double get_v() { return v;}
-	double get_qB() { return qB();}
+	double get_qB() { return qB;}
 	double get_omega(){return omega;}
 	double get_beta() { return beta;}
 	double get_eps() { return eps;}
@@ -59,6 +59,7 @@ struct Deriv {
 	double beta;
 	double eps;
 	double sigma;
+	double sigma6;
 	int seed;		// seed for the random generator
 
 	// the force matrix
@@ -82,7 +83,7 @@ struct Deriv {
 
 double Deriv::f(const double& r)
 {
-	double sr6 = pow(sigma/r,6.);
+	double sr6 = sigma6/(r*r*r*r*r*r);
 	return eps*(48.*sr6*sr6-24*sr6)/(r*beta);
 }
 
@@ -163,12 +164,17 @@ void Deriv::operator() (
 			
 			if( v > 0 ) {
 				// calculate r increment
-				dr[i][0] = v*p[i][0]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
-				dr[i][1] = v*p[i][1]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
-				dr[i][2] = v*p[i][2]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
+
 				if(qB>0) {
+					dr[i][0] = (v*p[i][0]*gamma + F[i][0])*dt + gamma*ndist(generator)*sqrt_dt*sqrt_2Dt;
+					dr[i][1] = (v*p[i][1]*gamma + F[i][1])*dt + gamma*ndist(generator)*sqrt_dt*sqrt_2Dt;
+					dr[i][2] = (v*p[i][2]*gamma + F[i][2])*dt + gamma*ndist(generator)*sqrt_dt*sqrt_2Dt;
 					wci = omega > 0 ? wc(r[i],qB,omega) : qB;
 					Q(dr[i],gamma,wci);
+				} else {
+					dr[i][0] = (v*p[i][0] + F[i][0]/gamma)*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
+					dr[i][1] = (v*p[i][1] + F[i][1]/gamma)*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
+					dr[i][2] = (v*p[i][2] + F[i][2]/gamma)*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
 				}
 				add_to(r[i],dr[i]);
 
@@ -186,12 +192,17 @@ void Deriv::operator() (
 
 			} else {
 				// calculate r increment
-				dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
-				dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
-				dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
+
 				if(qB>0) {
+					dr[i][0] = gamma*ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt;
+					dr[i][1] = gamma*ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt;
+					dr[i][2] = gamma*ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt;
 					wci = omega > 0 ? wc(r[i],qB,omega) : qB;
 					Q(dr[i],gamma,wci);
+				} else {
+					dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
+					dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
+					dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
 				}
 				add_to(r[i],dr[i]);
 
@@ -201,6 +212,19 @@ void Deriv::operator() (
 	}
 }
 
+void Deriv::Q(std::vector<double>& dri, double gamma, double wci)
+{
 
+	double drx = dri[0];
+	double dry = dri[1];
+
+	double A = wci/(gamma*gamma+wci*wci);
+	double B = 1-gamma/(gamma*gamma+wci*wci);
+
+	dri[0] = drx/gamma + A*dry - B*drx;
+	dri[1] = dry/gamma - A*drx - B*dry; 
+	dri[2] /= gamma;
+
+}
 
 #endif
