@@ -97,6 +97,54 @@ void read_variables_pairdist(int& N,double& rho, double& Dt,double& Dr,double& v
 	
 }
 
+
+void read_variables_magnetic(int& N,double& rho, double& Dt,double& Dr,double& v0,double& qB,
+	double& omega0, double& gamma,double& beta,double& eps,double& sigma,double& dt,
+	double& tf,double& teq, int& navg,double& bs_pAvg, int& seed,
+	std::string& name,std::string fileName)
+{
+	std::string temp;
+	std::ifstream infile(fileName);
+
+	infile >>temp;
+	infile >> N;
+	infile >> temp;
+	infile >> rho;
+	infile >>temp;
+	infile >> Dt;
+	infile >>temp;
+	infile >> Dr;
+	infile >>temp;
+	infile >> v0;
+	infile >>temp;
+	infile >> qB;
+	infile >>temp;
+	infile >> omega0;
+	infile >>temp;
+	infile >> gamma;
+	infile >>temp;
+	infile >> beta;
+	infile >>temp;
+	infile >> eps;
+	infile >>temp;
+	infile >> sigma;
+	infile >>temp;
+	infile >> dt;
+	infile >>temp;
+	infile >> tf;
+	infile >>temp;
+	infile >> teq;
+	infile >> temp;
+	infile >> navg;
+	infile >> temp;
+	infile >> bs_pAvg;
+	infile >> temp;
+	infile >> seed;
+	infile >>temp;
+	infile >> name;
+	
+}
+
 void read_variables_orientation(int& N,double& rho, double& Dt,double& Dr,double& v0,
 	double& omega0, double& gamma,double& beta,double& eps,double& sigma,double& dt,
 	double& tf,double& teq, int& navg,double& bs_pAvg, int& seed,
