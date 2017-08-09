@@ -70,9 +70,9 @@ struct Deriv {
 	double f(const double&);
 
 	//position dependent magnetic field
-	double wc(const std::vector<double>& ri, double qB, double omega);
+	double wc(const std::vector<double>& ri, double qB);
 
-	void Q(std::vector<double>& dri, double gamma, double wci);
+	void Q(std::vector<double>& dri, double wci);
 
 	// random number generator
 	std::default_random_engine generator;
@@ -122,7 +122,7 @@ void Deriv::update_F(
 	}
 }
 
-double Deriv::wc(const std::vector<double>& ri, double qB, double omega)
+double Deriv::wc(const std::vector<double>& ri, double qB)
 {
 	return qB*std::sin(omega*ri[2]);
 }
@@ -169,8 +169,8 @@ void Deriv::operator() (
 					dr[i][0] = (v*p[i][0]*gamma + F[i][0])*dt + gamma*ndist(generator)*sqrt_dt*sqrt_2Dt;
 					dr[i][1] = (v*p[i][1]*gamma + F[i][1])*dt + gamma*ndist(generator)*sqrt_dt*sqrt_2Dt;
 					dr[i][2] = (v*p[i][2]*gamma + F[i][2])*dt + gamma*ndist(generator)*sqrt_dt*sqrt_2Dt;
-					wci = omega > 0 ? wc(r[i],qB,omega) : qB;
-					Q(dr[i],gamma,wci);
+					wci = omega > 0 ? wc(r[i],qB) : qB;
+					Q(dr[i],wci);
 				} else {
 					dr[i][0] = (v*p[i][0] + F[i][0]/gamma)*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
 					dr[i][1] = (v*p[i][1] + F[i][1]/gamma)*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
@@ -187,18 +187,16 @@ void Deriv::operator() (
 				dp[i][2] = (etaX*p[i][1] - etaY*p[i][0]);
 
 				add_to(p[i],dp[i]);
-
 				normalize(p[i]);
 
 			} else {
-				// calculate r increment
 
 				if(qB>0) {
 					dr[i][0] = gamma*ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt;
 					dr[i][1] = gamma*ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt;
 					dr[i][2] = gamma*ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt;
-					wci = omega > 0 ? wc(r[i],qB,omega) : qB;
-					Q(dr[i],gamma,wci);
+					wci = omega > 0 ? wc(r[i],qB) : qB;
+					Q(dr[i],wci);
 				} else {
 					dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
 					dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
@@ -212,14 +210,14 @@ void Deriv::operator() (
 	}
 }
 
-void Deriv::Q(std::vector<double>& dri, double gamma, double wci)
+void Deriv::Q(std::vector<double>& dri, double wci)
 {
 
 	double drx = dri[0];
 	double dry = dri[1];
 
 	double A = wci/(gamma*gamma+wci*wci);
-	double B = 1-gamma/(gamma*gamma+wci*wci);
+	double B = 1./gamma-gamma/(gamma*gamma+wci*wci);
 
 	dri[0] = drx/gamma + A*dry - B*drx;
 	dri[1] = dry/gamma - A*drx - B*dry; 
