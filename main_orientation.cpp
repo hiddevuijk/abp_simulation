@@ -37,8 +37,6 @@ int main(int argc, char *argv[])
 	read_variables_orientation(N,rho,Dt,Dr,v0,omega0,gamma,beta,eps,sigma,dt,tf,teq,navg,bs_pAvg,seed,name,input_name);
 
 
-
-
 	L = pow(N/rho,1./3);
 
 	// omega = omega0 2 pi / L
@@ -75,9 +73,9 @@ int main(int argc, char *argv[])
 		integrate(r,dr,p,dp,deriv,0,tf,dt);
 
 		// get the orientation
-		orientation(r,p,pAvgx,0,bs_pAvg,L);
-		orientation(r,p,pAvgy,1,bs_pAvg,L);
-		orientation(r,p,pAvgz,2,bs_pAvg,L);
+		orientation(r,p,pAvgx_temp,0,bs_pAvg,L);
+		orientation(r,p,pAvgy_temp,1,bs_pAvg,L);
+		orientation(r,p,pAvgz_temp,2,bs_pAvg,L);
 		for(int i=0;i<NpAvg;++i) {
 			pAvgx[i][0] += pAvgx_temp[i][0]/navg;
 			pAvgx[i][1] += pAvgx_temp[i][1]/navg;
