@@ -35,9 +35,10 @@ int main(int argc, char *argv[])
 	}
 
 	// read variables from input file
-	read_variables_magnetic(N,rho,Dt,Dr,v0,qB,omega0,gamma,beta,eps,sigma,dt,tf,teq,navg,bs_pAvg,seed,name,input_name);
+	read_variables_magnetic(N,rho,Dt,Dr,v0,qB,omega0,gamma,beta,eps,
+			sigma,dt,tf,teq,navg,bs_pAvg,seed,name,input_name);
 
-
+	// L: box size
 	L = pow(N/rho,1./3);
 
 	// omega = omega0 2 pi / L
