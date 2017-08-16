@@ -9,7 +9,6 @@
 #include <assert.h>
 #include "vecmanip.h"
 
-#include <iostream>
 
 struct Deriv {
 	public:
