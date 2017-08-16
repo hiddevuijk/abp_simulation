@@ -1,8 +1,8 @@
 import numpy as np
 
-v0 = 0.;
-navg = 10;
-bs =0.02;
+v0 = 100.;
+navg = 5;
+bs = .1;
 N = 100;
 Dt = 1./1;
 Dr = 20.*Dt;
@@ -14,9 +14,9 @@ seed = 123456780;
 d = sigma
 dt = (1.e-4)*d*d/Dt;
 tf = .5*d*d/Dt;
-teq = 0.*d*d/Dt;
+teq = 1.*d*d/Dt;
 
-rho = .1
+rho = .5
 
 L = (N/rho)**(1/3.)
 
