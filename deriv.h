@@ -141,7 +141,7 @@ void Deriv::operator() (
 		dt = 0.5*sigma/maxForce;
 		maxForce *= 0.5*sigma/dt;
 	} else {
-		update_F(r);
+		if(eps>0) update_F(r);
 		maxForce = maxMat(F);
 	}
 
