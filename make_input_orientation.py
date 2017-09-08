@@ -1,25 +1,31 @@
 import numpy as np
+from sys import exit
 
-v0 = 10.;
+v0 = 20.;
 omega0 = 1.
-navg = 2;
-bs_pAvg =0.02;
-N = 10;
+navg = 50;
+bs_pAvg =.5;
+
+
+
+N = 500;
 Dt = 1./1;
-Dr = 20.*Dt;
+Dr = 25.*Dt;
 gamma = 1.;
 beta = 1.;
 eps = 1.;
 sigma = 1.;
-seed = 123456780;
+seed = 123456789;
+
 d = sigma
-dt = (1.e-4)*d*d/Dt;
-tf = .5*d*d/Dt;
-teq = 0.*d*d/Dt;
+dt = (1.e-3)*d*d/Dt;
+tf = 1.*d*d/Dt;
+teq = 5.*d*d/Dt;
 
-rho = .1
-
+rho = .2
 L = (N/rho)**(1/3.)
+#L = 50.
+#rho = N/(L**3.)
 
 
 name = ""

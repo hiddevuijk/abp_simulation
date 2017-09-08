@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 
 	vector<double> bins(NpAvg,0.0);
 	for(int i=0;i<NpAvg;++i)
-		bins[i] = (i+1)*bs_pAvg;
+		bins[i] = (i+.5)*bs_pAvg;
 
 
 	vector<vector<double> > r(N,vector<double>(3));
@@ -93,27 +93,24 @@ int main(int argc, char *argv[])
 
 
 		for(int i=0;i<NpAvg;++i) {
-			pAvgx[i][0] += pAvgx_temp[i][0]/navg;
-			pAvgx[i][1] += pAvgx_temp[i][1]/navg;
-			pAvgx[i][2] += pAvgx_temp[i][2]/navg;
+			pAvgx[i][0] += pAvgx_temp[i][0]/(navg*N*bs_pAvg);
+			pAvgx[i][1] += pAvgx_temp[i][1]/(navg*N*bs_pAvg);
+			pAvgx[i][2] += pAvgx_temp[i][2]/(navg*N*bs_pAvg);
 			
-			pAvgy[i][0] += pAvgy_temp[i][0]/navg;
-			pAvgy[i][1] += pAvgy_temp[i][1]/navg;
-			pAvgy[i][2] += pAvgy_temp[i][2]/navg;
+			pAvgy[i][0] += pAvgy_temp[i][0]/(navg*N*bs_pAvg);
+			pAvgy[i][1] += pAvgy_temp[i][1]/(navg*N*bs_pAvg);
+			pAvgy[i][2] += pAvgy_temp[i][2]/(navg*N*bs_pAvg);
 			
-			pAvgz[i][0] += pAvgz_temp[i][0]/navg;
-			pAvgz[i][1] += pAvgz_temp[i][1]/navg;
-			pAvgz[i][2] += pAvgz_temp[i][2]/navg;
+			pAvgz[i][0] += pAvgz_temp[i][0]/(navg*N*bs_pAvg);
+			pAvgz[i][1] += pAvgz_temp[i][1]/(navg*N*bs_pAvg);
+			pAvgz[i][2] += pAvgz_temp[i][2]/(navg*N*bs_pAvg);
 
-			rhox[i] += rhox_temp[i]/navg;
-			rhoy[i] += rhoy_temp[i]/navg;
-			rhoz[i] += rhoz_temp[i]/navg;
+			rhox[i] += rhox_temp[i]/(navg*N*bs_pAvg);
+			rhoy[i] += rhoy_temp[i]/(navg*N*bs_pAvg);
+			rhoz[i] += rhoz_temp[i]/(navg*N*bs_pAvg);
 
 		}	
 	}
-	// shift bins with .5bs to mid point
-	for(int i=0;i<NpAvg;++i)
-		bins[i] -= 0.5*bs_pAvg;
 	
 	write_mat(pAvgx,pAvgx.size(),pAvgx[0].size(),"pAvgx.dat");
 	write_mat(pAvgy,pAvgy.size(),pAvgy[0].size(),"pAvgy.dat");
@@ -121,7 +118,7 @@ int main(int argc, char *argv[])
 	write_vec(rhox,"rhox.dat");
 	write_vec(rhoy,"rhoy.dat");
 	write_vec(rhoz,"rhoz.dat");
-	write_vec(bins,"pAvg_bins.dat");
+	write_vec(bins,"bins.dat");
 
 
 

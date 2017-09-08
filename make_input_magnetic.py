@@ -1,22 +1,22 @@
 import numpy as np
 
-v0 = 10.
+v0 = 0.
 omega0 = 1.
-qB = 1.
-navg = 2;
-bs_pAvg =0.02;
-N = 10;
+qB = 10.
+navg = 1000;
+bs_pAvg =0.1;
+N = 100;
 Dt = 1./1;
 Dr = 20.*Dt;
 gamma = 1.;
 beta = 1.;
-eps = 1.;
+eps = 0.;
 sigma = 1.;
-seed = 123456780;
+seed = 123456701;
 d = sigma
-dt = (1.e-4)*d*d/Dt;
+dt = (1.e-3)*d*d/Dt;
 tf = .5*d*d/Dt;
-teq = 0.*d*d/Dt;
+teq = 10.*d*d/Dt;
 
 rho = .1
 
