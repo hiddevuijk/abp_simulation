@@ -69,8 +69,10 @@ struct Deriv {
 	double f(const double&);
 
 	//position dependent magnetic field
-	double wc(const std::vector<double>& ri);
-	double wcp(const std::vector<double>& ri);
+	double wc(const std::vector<double>& ri)
+		{return qB*std::sin(omega*ri[1]);}
+	double wcp(const std::vector<double>& ri)
+		{return qB*omega*std::cos(omega*ri[1]);}
 
 	// random number generator
 	std::default_random_engine generator;
@@ -121,16 +123,6 @@ void Deriv::update_F(
 	}
 }
 
-double Deriv::wc(const std::vector<double>& ri)
-{
-	return qB*std::sin(omega*ri[1]);
-}
-
-double Deriv::wcp(const std::vector<double>& ri)
-{
-	return qB*omega*std::cos(omega*ri[1]);
-}
-
 // The () operator calculates the increment in r and p (dr and dp) at r,p
 // for a time increment dt and adds it to r and p
 void Deriv::operator() (
@@ -164,9 +156,9 @@ void Deriv::operator() (
 		for(int i=0;i<N;++i) {
 
 			//check if forces do not exceed critical value			
-			assert(abs(F[i][0])*dt<sigma);
-			assert(abs(F[i][1])*dt<sigma);
-			assert(abs(F[i][2])*dt<sigma);
+			//assert(abs(F[i][0])*dt<sigma);
+			//assert(abs(F[i][1])*dt<sigma);
+			//assert(abs(F[i][2])*dt<sigma);
 
 			
 			if( v > 0 ) {
