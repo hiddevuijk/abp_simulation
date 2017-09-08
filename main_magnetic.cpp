@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
 	int navg;
 	int N, seed;
-	double Dt,Dr,v0,qB,omega0,gamma,beta,eps,sigma,L,dt,tf,teq;
+	double Dt,Dr,v0,qB,omega0,beta,eps,sigma,L,dt,tf,teq;
 	double rho;
 	double bs_pAvg;		// binsize for orientation
 	// name of the output file
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 	}
 
 	// read variables from input file
-	read_variables_magnetic(N,rho,Dt,Dr,v0,qB,omega0,gamma,beta,eps,
+	read_variables_magnetic(N,rho,Dt,Dr,v0,qB,omega0,beta,eps,
 			sigma,dt,tf,teq,navg,bs_pAvg,seed,name,input_name);
 
 	// L: box size
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 	init_r_fcc(r,N,sigma,L);
 
 	// init deriv objec to perform integration
-	Deriv deriv(N,L,Dt,Dr,v0,qB,omega,gamma,beta,eps,sigma,seed);
+	Deriv deriv(N,L,Dt,Dr,v0,qB,omega,beta,eps,sigma,seed);
 
 	// equilibrate: integrate until teq
 	integrate(r,dr,p,dp,deriv,0,teq,dt);

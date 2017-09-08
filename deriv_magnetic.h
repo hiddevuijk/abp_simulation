@@ -15,12 +15,12 @@ struct Deriv {
 
 	Deriv(int NN, double LL, double Dtt, double Drr,
 			double vv, double qBB, double omegaa,
-			double gammaa,double betaa, double epss, double sigmaa,
+			double betaa, double epss, double sigmaa,
 			int seedd):
 			N(NN),L(LL), Dt(Dtt), sqrt_2Dt(std::sqrt(2*Dtt)),
 			sqrt_2Dr(std::sqrt(2*Drr)),
 			v(vv),qB(qBB),omega(omegaa),
-			gamma(gammaa), beta(betaa), eps(epss), sigma(sigmaa),
+			beta(betaa), eps(epss), sigma(sigmaa),
 			sigma6(pow(sigma,6.)),seed(seedd), generator(seed),ndist(0.,1.),
 			F(N,std::vector<double>(3,0.))
 			{}
@@ -44,7 +44,6 @@ struct Deriv {
 	double get_beta() { return beta;}
 	double get_eps() { return eps;}
 	double get_sigma() {return sigma;}
-	double get_gamma() { return gamma;}
 	std::vector<std::vector<double> > get_F() {return F;}
 
 	private:
@@ -56,7 +55,6 @@ struct Deriv {
 	double v;
 	double qB;
 	double omega;
-	double gamma;
 	double beta;
 	double eps;
 	double sigma;
@@ -175,26 +173,25 @@ void Deriv::operator() (
 				// calculate r increment
 
 				if(qB>0) {
-					dr[i][0] = (v*p[i][0]*gamma + F[i][0])*dt + gamma*ndist(generator)*sqrt_dt*sqrt_2Dt;
-					dr[i][1] = (v*p[i][1]*gamma + F[i][1])*dt + gamma*ndist(generator)*sqrt_dt*sqrt_2Dt;
-					dr[i][2] = (v*p[i][2]*gamma + F[i][2])*dt + gamma*ndist(generator)*sqrt_dt*sqrt_2Dt;
+					dr[i][0] = (v*p[i][0] + F[i][0])*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
+					dr[i][1] = (v*p[i][1] + F[i][1])*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
+					dr[i][2] = (v*p[i][2] + F[i][2])*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
 					wci = wc(r[i]);
 					wcip = wcp(r[i]);
-					D = gamma*gamma + wci*wci;
+					D = 1. + wci*wci;
 					drx = dr[i][0];
 					dry = dr[i][1];
 
 					// act with Q
-					dr[i][0] = (gamma*drx + wci*dry)/D;
-					dr[i][1] = (gamma*dry - wci*drx)/D;
-					dr[i][2] /= gamma;
+					dr[i][0] = (drx + wci*dry)/D;
+					dr[i][1] = (dry - wci*drx)/D;
 
 					// add A (preserves eq. dist.)
 					dr[i][1] -= 2*Dt*wcip*wci/(D*D)*dt;
 				} else {
-					dr[i][0] = (v*p[i][0] + F[i][0]/gamma)*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
-					dr[i][1] = (v*p[i][1] + F[i][1]/gamma)*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
-					dr[i][2] = (v*p[i][2] + F[i][2]/gamma)*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
+					dr[i][0] = (v*p[i][0] + F[i][0])*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
+					dr[i][1] = (v*p[i][1] + F[i][1])*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
+					dr[i][2] = (v*p[i][2] + F[i][2])*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
 				}
 				
 				r[i][0] += dr[i][0];
@@ -215,27 +212,26 @@ void Deriv::operator() (
 			} else {
 
 				if(qB>0) {
-					dr[i][0] = gamma*ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt;
-					dr[i][1] = gamma*ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt;
-					dr[i][2] = gamma*ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt;
+					dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt;
+					dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt;
+					dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt;
 					wci = wc(r[i]);
 					wcip = wcp(r[i]);
-					D = gamma*gamma + wci*wci;
+					D = 1. + wci*wci;
 					drx = dr[i][0];
 					dry = dr[i][1];
 
 					// act with Q
-					dr[i][0] = (gamma*drx + wci*dry)/D;
-					dr[i][1] = (gamma*dry - wci*drx)/D;
-					dr[i][2] /= gamma;
+					dr[i][0] = (drx + wci*dry)/D;
+					dr[i][1] = (dry - wci*drx)/D;
 
 					// add A (preserves eq. dist.)
 					dr[i][1] -= 2*Dt*wcip*wci/(D*D)*dt;
 					
 				} else {
-					dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
-					dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
-					dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
+					dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt;
+					dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt;
+					dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt;
 				}
 				r[i][0] += dr[i][0];
 				r[i][1] += dr[i][1];

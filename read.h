@@ -99,7 +99,7 @@ void read_variables_pairdist(int& N,double& rho, double& Dt,double& Dr,double& v
 
 
 void read_variables_magnetic(int& N,double& rho, double& Dt,double& Dr,double& v0,double& qB,
-	double& omega0, double& gamma,double& beta,double& eps,double& sigma,double& dt,
+	double& omega0,double& beta,double& eps,double& sigma,double& dt,
 	double& tf,double& teq, int& navg,double& bs_pAvg, int& seed,
 	std::string& name,std::string fileName)
 {
@@ -120,8 +120,6 @@ void read_variables_magnetic(int& N,double& rho, double& Dt,double& Dr,double& v
 	infile >> qB;
 	infile >>temp;
 	infile >> omega0;
-	infile >>temp;
-	infile >> gamma;
 	infile >>temp;
 	infile >> beta;
 	infile >>temp;
