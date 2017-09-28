@@ -175,11 +175,12 @@ void Deriv::operator() (
 					dry = dr[i][1];
 
 					// act with Q
-					dr[i][0] = (drx + wci*dry)/D;
-					dr[i][1] = (dry - wci*drx)/D;
+					dr[i][0] = (1-wci*wci/D)*drx + (wci/D)*dry;
+					dr[i][1] = (1-wci*wci/D)*dry - (wci/D)*drx;
 
 					// add A (preserves eq. dist.)
-					dr[i][1] -= 2*Dt*wcip*wci/(D*D)*dt;
+					dr[i][0] += wcip*(1-wci*wci)*dt/(D*D);
+					dr[i][0] -= 2.*wci*wcip*dt/(D*D);
 				} else {
 					dr[i][0] = (v*p[i][0] + F[i][0])*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
 					dr[i][1] = (v*p[i][1] + F[i][1])*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
