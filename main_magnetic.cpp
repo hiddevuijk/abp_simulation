@@ -11,6 +11,7 @@
 #include "fcc_lattice.h"
 #include "orientation.h"
 #include "density.h"
+#include "flux.h"
 
 using namespace std;
 
@@ -87,6 +88,7 @@ int main(int argc, char *argv[])
 		orientation(r,p,pAvgy_temp,1,bs_pAvg,L);
 		orientation(r,p,pAvgz_temp,2,bs_pAvg,L);
 
+		// and the density
 		density(r,rhox_temp,0,bs_pAvg,L);
 		density(r,rhoy_temp,1,bs_pAvg,L);
 		density(r,rhoz_temp,2,bs_pAvg,L);

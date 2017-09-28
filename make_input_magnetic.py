@@ -1,26 +1,27 @@
 import numpy as np
 
-v0 = 0.
+v0 = 5.
 omega0 = 1.
-qB = 10.
-navg = 100;
-bs_pAvg =0.1;
-N = 100;
+qB = 2.
+navg = 10;
+nbin = 100;
+N = 30;
 Dt = 1./1;
 Dr = 20.*Dt;
 beta = 1.;
 eps = 0.;
 sigma = 1.;
-seed = 123456701;
+seed = 123456789;
 d = sigma
-dt = (1.e-2)*d*d/Dt;
+dt = (1.e-3)*d*d/Dt;
 tf = .5*d*d/Dt;
 teq = 10.*d*d/Dt;
 
-rho = .1
+rho = 0.2
 
 L = (N/rho)**(1/3.)
 
+bs_pAvg =L/nbin;
 
 name = ""
 infile = open("input.txt",'w')
