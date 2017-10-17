@@ -33,6 +33,24 @@ void integrate(std::vector<std::vector<double> >& r,
 	}
 }
 
+template <typename Deriv_object>
+void integrate_fixed_dt(std::vector<std::vector<double> >& r,
+	std::vector<std::vector<double> >& dr,
+	std::vector<std::vector<double> >& p,
+	std::vector<std::vector<double> >& dp,
+	Deriv_object& deriv, double ti, double tf, double dtmax)
+{
+	bool err = false;	// true if F*dt>sigma
+	double maxForce;
+	double dt = dtmax;
+	while( (ti+dt) <= tf){
+		deriv(r,dr,p,dp,dt,err,maxForce);
+		ti += dt;
+	}
+	if(ti < tf) {
+		integrate(r,dr,p,dp,deriv,ti,tf,tf-ti);
+	}
+}
 /*
 void integrate(std::vector<std::vector<double> >& r,
 	std::vector<std::vector<double> >& p,
