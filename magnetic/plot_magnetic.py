@@ -3,12 +3,15 @@ import matplotlib.pyplot as plt
 from sys import exit
 
 
-q = 1
+q = 5.
+v0 = 10.
+Dr = 20.
 omega0 = 1
 rho = 0.2
 N = 300
 
 L = (N/rho)**(1./3)
+L = 10.
 omega = 2*np.pi*omega0/L
 
 def w(y):
@@ -23,12 +26,14 @@ def Bp(y):
 	D= 1+w(y)*w(y)
 	return -2.*w(y)*wp(y)/(D*D)
 
-y = np.linspace(0,L,75)
-px = -1.*Ap(y)
-py = -1.*Bp(y)
+y = np.linspace(0,L,1000)
+px = Ap(y)
+py = Bp(y)
 
-plt.plot(y,px/12,label='px')
-plt.plot(y,py/12,label='py')
+c = -v0/(6*Dr)
+
+plt.plot(y,px*c,label='px')
+plt.plot(y,py*c,label='py')
 
 plt.legend()
 plt.tight_layout()

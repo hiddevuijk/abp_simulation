@@ -65,9 +65,22 @@ int main(int argc, char *argv[])
 	M2 p(N,vector<double>(3,1.));
 	M2 dp(N,vector<double>(3,1.));
 
+
+	// vH.[ti][x0i][xi]
 	M3 vHx(Ntbin,M2(Nbin,vector<double>(Nbin,0.0)));
 	M3 vHy(Ntbin,M2(Nbin,vector<double>(Nbin,0.0)));
 	M3 vHz(Ntbin,M2(Nbin,vector<double>(Nbin,0.0)));
+
+
+	// vH(t) starting from r0, index=r
+	M2 vHxTemp(Nbin,0.0);
+	M2 vHyTemp(Nbin,0.0);
+	M2 vHzTemp(Nbin,0.0);
+
+	// number of measurements starting from this index
+	vector<int> Nvhx(Nbin,0);
+	vector<int> Nvhy(Nbin,0);
+	vector<int> Nvhy(Nbin,0);
 
 
 	// initalize r vector: put particles on a fcc lattice
@@ -80,8 +93,11 @@ int main(int argc, char *argv[])
 	integrate(r,dr,p,dp,deriv,0,teq,dt);
 
 	for( int n =0;n<navg;n++) {
-		integrate(r,dr,p,dp,deriv,0,tf,dt);
-
+		r0 = r;
+		for(int ti=0;ti<Ntbin;ti++) {
+			integrate(r,dr,p,dp,deriv,0,tbs,dt);
+			get_vanHovexyz(vHxTemp,vHyTemp,vHzTemp,r,r0,bs,Nbins);
+		}
 	}
 
 

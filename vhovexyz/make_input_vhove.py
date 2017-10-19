@@ -1,27 +1,35 @@
 import numpy as np
 
-v0 = 5.
-omega0 = 1.
-qB = 2.
-navg = 10;
-nbin = 100;
-N = 30;
+v0 = 0.
+navg = 5
+
+rm_vh = 0.5
+dr_vh = 0.2
+
+Nr_vh = rm_vh/dr_vh + 1
+
+
+N = 102;
 Dt = 1./1;
 Dr = 20.*Dt;
+gamma = 1.;
 beta = 1.;
-eps = 0.;
+eps = 1.;
 sigma = 1.;
 seed = 123456789;
 d = sigma
-dt = (1.e-3)*d*d/Dt;
-tf = .5*d*d/Dt;
-teq = 10.*d*d/Dt;
+dt = (1.e-4)*d*d/Dt;
 
-rho = 0.2
+tm_vh = .5*d*d/Dt
+dt_vh = .05*d*d/Dt;
+Nt_vh = tm_vh/dt_vh + 1;
+
+teq = 0.*d*d/Dt;
+
+rho = .1
 
 L = (N/rho)**(1/3.)
 
-bs_pAvg =L/nbin;
 
 name = ""
 infile = open("input.txt",'w')
@@ -30,16 +38,17 @@ infile.write("rho=\n%f\n" % rho)
 infile.write("Dt=\n%f\n" % Dt)
 infile.write("Dr=\n%f\n" % Dr)
 infile.write("v0=\n%f\n" % v0)
-infile.write("qB=\n%f\n" % qB)
-infile.write("omega0\n%f\n" % omega0)
+infile.write("gamma=\n%f\n" % gamma)
 infile.write("beta=\n%f\n" % beta)
 infile.write("eps=\n%f\n" % eps)
 infile.write("sigma=\n%f\n" % sigma)
 infile.write("dt=\n%f\n" % dt)
-infile.write("tf=\n%f\n" % tf)
+infile.write("dt_vh=\n%f\n" % dt_vh)
+infile.write("tm_vh=\n%f\n" % tm_vh)
+infile.write("dr_vh=\n%f\n" % dr_vh)
+infile.write("rm_vh=\n%f\n" % rm_vh)
 infile.write("teq=\n%i\n" % teq)
 infile.write("navg=\n%i\n" % navg)
-infile.write("bs_pAvg=\n%f\n" % bs_pAvg)
 infile.write("seed=\n%i\n" % seed)
 infile.write("name=\n" + name)
 
