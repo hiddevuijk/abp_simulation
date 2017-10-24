@@ -5,6 +5,29 @@
 #include <assert.h>
 #include <iostream>
 #include <math.h>
+
+namespace Flux {
+	typedef std::vector<std::vector<double> > M2;
+	typedef std::vector<std::vector<std::vector<double> > > M3;
+};
+
+void fluxXY( const Flux::M2& r,const Flux::M2& dr,
+	Flux::M3& f,double L, double bs)
+{
+	double x,y;
+	int xi,yi;
+	for(int i=0;i<r.size();++i) {
+		x = r[i][0] - L*floor(r[i][0]/L);
+		y = r[i][1] - L*floor(r[i][1]/L);
+		xi = floor(x/bs);
+		yi = floor(y/bs);
+		f[xi][yi][0] += dr[i][0];
+		f[xi][yi][1] += dr[i][1];
+	} 
+
+}
+
+
 void flux2(
 	const std::vector<std::vector<double> >& r,
 	const std::vector<std::vector<double> >& dr,
@@ -32,7 +55,7 @@ void flux2(
 		}
 		if(j2<j1) dj *= -1;
 	
-		assert(dj<=1 and dj>=-1);
+		//assert(dj<=1 and dj>=-1);
 		r1ixyz = r[i][xyz] - dr[i][xyz];
 		x1 = r1ixyz - L*floor(r1ixyz/L);
 		j1 = floor(x1/bs);
