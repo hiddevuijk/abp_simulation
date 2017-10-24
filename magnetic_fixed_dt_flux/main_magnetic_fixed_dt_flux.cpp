@@ -15,6 +15,9 @@
 
 using namespace std;
 
+typedef vector<double> M1;
+typedef vector<vector<double> > M2;
+typedef vector<vector<vector<double> > > M3;
 
 int main(int argc, char *argv[])
 {
@@ -47,25 +50,28 @@ int main(int argc, char *argv[])
 
 
 	int NpAvg = ceil(L/bs_pAvg);
-	vector<vector<double> > pAvgx_temp(NpAvg,vector<double>(3,0.0));
-	vector<vector<double> > pAvgy_temp(NpAvg,vector<double>(3,0.0));
-	vector<vector<double> > pAvgz_temp(NpAvg,vector<double>(3,0.0));
-	vector<vector<double> > pAvgx(NpAvg,vector<double>(3,0.0));
-	vector<vector<double> > pAvgy(NpAvg,vector<double>(3,0.0));
-	vector<vector<double> > pAvgz(NpAvg,vector<double>(3,0.0));
-	vector<double> rhox(NpAvg,0.);
-	vector<double> rhoy(NpAvg,0.);
-	vector<double> rhoz(NpAvg,0.);
-	vector<double> rhox_temp(NpAvg,0.);
-	vector<double> rhoy_temp(NpAvg,0.);
-	vector<double> rhoz_temp(NpAvg,0.);
-	vector<double> fluxy(NpAvg,0.);
-	vector<double> fluyx(NpAvg,0.);
-	vector<double> fluyy(NpAvg,0.);
-	vector<double> fluxy_temp(NpAvg,0.);
-	vector<double> fluyx_temp(NpAvg,0.);
-	vector<double> fluyy_temp(NpAvg,0.);
-
+	M2 pAvgx_temp(NpAvg,M1(3,0.0));
+	M2 pAvgy_temp(NpAvg,M1(3,0.0));
+	M2 pAvgz_temp(NpAvg,M1(3,0.0));
+	M2 pAvgx(NpAvg,M1(3,0.0));
+	M2 pAvgy(NpAvg,M1(3,0.0));
+	M2 pAvgz(NpAvg,M1(3,0.0));
+	M1 rhox(NpAvg,0.);
+	M1 rhoy(NpAvg,0.);
+	M1 rhoz(NpAvg,0.);
+	M1 rhox_temp(NpAvg,0.);
+	M1 rhoy_temp(NpAvg,0.);
+	M1 rhoz_temp(NpAvg,0.);
+	M1 rhox_temp1(NpAvg,0.);
+	M1 rhoy_temp1(NpAvg,0.);
+	M1 rhoz_temp1(NpAvg,0.);
+	M1 fluxy(NpAvg,0.);
+	M1 fluyx(NpAvg,0.);
+	M1 fluyy(NpAvg,0.);
+	M1 fluxy_temp(NpAvg,0.);
+	M1 fluyx_temp(NpAvg,0.);
+	M1 fluyy_temp(NpAvg,0.);
+	M3 fxy(NpAvg,M2(NpAvg,M1(2,0.)));
 
 
 	vector<double> bins(NpAvg,0.0);
@@ -98,11 +104,16 @@ int main(int argc, char *argv[])
 		orientation(r,p,pAvgy_temp,1,bs_pAvg,L);
 		orientation(r,p,pAvgz_temp,2,bs_pAvg,L);
 
-		// and the density
-		density(r,rhox_temp,0,bs_pAvg,L);
-		density(r,rhoy_temp,1,bs_pAvg,L);
-		density(r,rhoz_temp,2,bs_pAvg,L);
+		rhox_temp = rhox_temp1;
+		rhoy_temp = rhoy_temp1;
+		rhoz_temp = rhoz_temp1;
 
+		// and the density
+		density(r,rhox_temp1,0,bs_pAvg,L);
+		density(r,rhoy_temp1,1,bs_pAvg,L);
+		density(r,rhoz_temp1,2,bs_pAvg,L);
+
+		fluxXY(r,dr,fxy,L,bs_pAvg);
 
 		flux2(r,dr,fluxy_temp,0,1,bs_pAvg,L,errorCount);
 		flux2(r,dr,fluyx_temp,1,0,bs_pAvg,L,errorCount);
@@ -133,6 +144,17 @@ int main(int argc, char *argv[])
 
 		}	
 	}
+
+	for(int i=0;i<NpAvg;++i) {
+		for(int j=0;j<NpAvg;++j) {
+			fxy[i][j][0] /= navg*N*dt*bs_pAvg*bs_pAvg;
+			fxy[i][j][1] /= navg*N*dt*bs_pAvg*bs_pAvg;
+		}
+	}
+
+
+
+	
 	
 	write_mat(pAvgx,pAvgx.size(),pAvgx[0].size(),"pAvgx.dat");
 	write_mat(pAvgy,pAvgy.size(),pAvgy[0].size(),"pAvgy.dat");
@@ -144,6 +166,28 @@ int main(int argc, char *argv[])
 	write_vec(fluyx,"fluyx.dat");
 	write_vec(fluyy,"fluyy,dat");
 	write_vec(bins,"bins.dat");
+	
+
+	ofstream outX;
+	outX.open("fxyX.dat");
+	ofstream outY;
+	outY.open("fxyY.dat");
+
+	for(int n=0;n<fxy.size();n++){
+		for(int m=0;m<fxy[n].size();m++){
+			outX << fxy[n][m][0];
+			outY << fxy[n][m][1];
+			if(m + 1 < fxy[n].size()) {
+				outX << ';';
+				outY << ';';
+			}
+		}
+		outX << '\n';
+		outY << '\n';
+	}
+
+
+
 
 	cout << errorCount;
 
