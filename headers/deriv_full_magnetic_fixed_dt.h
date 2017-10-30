@@ -1,5 +1,5 @@
-#ifndef GUARD_deriv_h
-#define GUARD_deriv_h
+#ifndef GUARD_deriv_full_magnetic_fixed_dt_h
+#define GUARD_deriv_full_magnetic_fixed_dt_h
 
 
 
@@ -14,14 +14,14 @@ struct Deriv {
 	public:
 
 	Deriv(int NN, double LL, double Dtt, double Drr,
-			double vv, double omegaa,
-			double gammaa,double betaa, double epss, double sigmaa,
+			double mm, double v00, double qBB, double omegaa,
+			double betaa, double epss, double sigmaa,
 			int seedd):
-			N(NN),L(LL), sqrt_2Dt(std::sqrt(2*Dtt)),
-			sqrt_2Dr(std::sqrt(2*Drr)),
-			v(vv),omega(omegaa),
-			gamma(gammaa), beta(betaa), eps(epss), sigma(sigmaa),
-			seed(seedd), generator(seed),ndist(0.,1.),
+			N(NN),L(LL), Dt(Dtt), sqrt_2Dt(std::sqrt(2*Dtt)),
+			sqrt_2Dr(std::sqrt(2*Drr)),m(mm),
+			v0(v00),qB(qBB),omega(omegaa),
+			beta(betaa), eps(epss), sigma(sigmaa),
+			sigma6(pow(sigma,6.)),seed(seedd), generator(seed),ndist(0.,1.),
 			F(N,std::vector<double>(3,0.))
 			{}
 
@@ -30,34 +30,39 @@ struct Deriv {
 	void operator() (
 			std::vector<std::vector<double> >& r,
 			std::vector<std::vector<double> >& dr,
+			std::vector<std::vector<double> >& v,
+			std::vector<std::vector<double> >& dv,
 			std::vector<std::vector<double> >& p,
 			std::vector<std::vector<double> >& dp,
 			double dt,bool err, double maxForce);
 
 	int get_N() { return N;}
 	double get_L() { return L;}
-	double get_Dt() { return 0.5*sqrt_2Dt*sqrt_2Dt;}
+	double get_Dt() { return Dt;}
 	double get_Dr() { return 0.5*sqrt_2Dr*sqrt_2Dr;}
-	double get_v() { return v;}
+	double get_v0() { return v0;}
+	double get_qB() { return qB;}
 	double get_omega(){return omega;}
 	double get_beta() { return beta;}
 	double get_eps() { return eps;}
 	double get_sigma() {return sigma;}
-	double get_gamma() { return gamma;}
+	double get_m() {return m;}
 	std::vector<std::vector<double> > get_F() {return F;}
 
 	private:
 	int N;			// number of particles
 	double L;		// size of the box
-	double dt;
+	double Dt;
 	double sqrt_2Dt;	// sqrt(2*Dt)
 	double sqrt_2Dr;	// sqrt(2*Dr)
-	double v;
+	double m;
+	double v0;
+	double qB;
 	double omega;
-	double gamma;
 	double beta;
 	double eps;
 	double sigma;
+	double sigma6;
 	int seed;		// seed for the random generator
 
 	// the force matrix
@@ -67,9 +72,11 @@ struct Deriv {
 	// force between two particles
 	double f(const double&);
 
-	//position dependent activity
-	double v0(const std::vector<double>& ri, double v, double omega);
-
+	//position dependent magnetic field
+	double wc(const std::vector<double>& ri)
+		{return qB*std::sin(omega*ri[1]);}
+	double wcp(const std::vector<double>& ri)
+		{return qB*omega*std::cos(omega*ri[1]);}
 
 	// random number generator
 	std::default_random_engine generator;
@@ -80,13 +87,16 @@ struct Deriv {
 
 double Deriv::f(const double& r)
 {
-	double sr6 = pow(sigma/r,6.);
+	double sr6 = sigma6/(r*r*r*r*r*r);
 	return eps*(48.*sr6*sr6-24*sr6)/(r*beta);
 }
 
 void Deriv::update_F(
 	const std::vector<std::vector<double> >& r)
 {
+	// no forcesfor eps<=0
+	if( eps <= 0 ) return;
+
 
 	double abs_r,abs_f,dx,dy,dz;
 
@@ -119,77 +129,64 @@ void Deriv::update_F(
 	}
 }
 
-double Deriv::v0(const std::vector<double>& ri, double v, double omega)
-{
-	return v*std::sin(omega*ri[2]);
-}
-
 
 // The () operator calculates the increment in r and p (dr and dp) at r,p
 // for a time increment dt and adds it to r and p
 void Deriv::operator() (
 		std::vector<std::vector<double> >& r,
 		std::vector<std::vector<double> >& dr,
+		std::vector<std::vector<double> >& v,
+		std::vector<std::vector<double> >& dv,
 		std::vector<std::vector<double> >& p,
 		std::vector<std::vector<double> >& dp,
 		double dt,bool err, double maxForce)
 {
+
 	double sqrt_dt = std::sqrt(dt);
 	double etaX, etaY, etaZ;	// random numbers for the orientation vector
-	double vi;	// position dep. swim velocity
-	double px,py,pz;
-	if(err) {
-		dt = 0.5*sigma/maxForce;
-		maxForce *= 0.5*sigma/dt;
-	} else {
-		if(eps>0) update_F(r);
-		maxForce = maxMat(F);
-	}
+	double wci;	// position dep. wc
+	
+	for(int i=0;i<N;++i) {
 
-	if(maxForce*dt>sigma) {
-		err = true;
-	} else {
-		err = false;
+		//check if forces do not exceed critical value			
+		//assert(abs(F[i][0])*dt<sigma);
+		//assert(abs(F[i][1])*dt<sigma);
+		//assert(abs(F[i][2])*dt<sigma);
+
+
+		wci = wc(r[i]);
+		dv[i][0] = (-v[i][0] + wci*v[i][1]+ v0*p[i][0] + F[i][0])*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
+		dv[i][1] = (-v[i][1] - wci*v[i][0]+v0*p[i][1] + F[i][1])*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
+		dv[i][2] = (-v[i][2] + v0*p[i][2] + F[i][2])*dt + ndist(generator)*sqrt_dt*sqrt_2Dt;
+
 		
-		for(int i=0;i<N;++i) {
+		v[i][0] += dv[i][0]/m;
+		v[i][1] += dv[i][1]/m;
+		v[i][2] += dv[i][2]/m;
 
-			//check if forces do not exceed critical value			
-			assert(abs(F[i][0])*dt<sigma);
-			assert(abs(F[i][1])*dt<sigma);
-			assert(abs(F[i][2])*dt<sigma);
+		dr[i][0] = v[i][0]*dt;
+		dr[i][1] = v[i][1]*dt;
+		dr[i][2] = v[i][2]*dt;
 
-			
-			if( v > 0 ) {
-				vi = omega > 0 ? v0(r[i],v,omega) : v;
-				// calculate r increment
-				dr[i][0] = vi*p[i][0]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
-				dr[i][1] = vi*p[i][1]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
-				dr[i][2] = vi*p[i][2]*dt + ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
-				add_to(r[i],dr[i]);
+		r[i][0] += dr[i][0];
+		r[i][1] += dr[i][1];
+		r[i][2] += dr[i][2];
 
 
+		// calculate p increment
+		etaX = ndist(generator)*sqrt_dt*sqrt_2Dr;
+		etaY = ndist(generator)*sqrt_dt*sqrt_2Dr;
+		etaZ = ndist(generator)*sqrt_dt*sqrt_2Dr;
+		dp[i][0] = (etaY*p[i][2] - etaZ*p[i][1]);
+		dp[i][1] = (etaZ*p[i][0] - etaX*p[i][2]);
+		dp[i][2] = (etaX*p[i][1] - etaY*p[i][0]);
+		p[i][0] += dp[i][0];
+		p[i][1] += dp[i][1];
+		p[i][2] += dp[i][2];	
+		normalize(p[i]);
 
-				// calculate p increment
-				etaX = ndist(generator)*sqrt_dt*sqrt_2Dr;
-				etaY = ndist(generator)*sqrt_dt*sqrt_2Dr;
-				etaZ = ndist(generator)*sqrt_dt*sqrt_2Dr;
-				dp[i][0] = (etaY*p[i][2] - etaZ*p[i][1]);
-				dp[i][1] = (etaZ*p[i][0] - etaX*p[i][2]);
-				dp[i][2] = (etaX*p[i][1] - etaY*p[i][0]);
-				add_to(p[i],dp[i]);
-				normalize(p[i]);
-
-			} else {
-				// calculate r increment
-				dr[i][0] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][0]*dt/gamma;
-				dr[i][1] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][1]*dt/gamma;
-				dr[i][2] = ndist(generator)*sqrt_dt*sqrt_2Dt + F[i][2]*dt/gamma;
-				add_to(r[i],dr[i]);
-
-			}
-
-		}
 	}
 }
+
 
 #endif

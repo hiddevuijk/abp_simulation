@@ -73,14 +73,14 @@ int main(int argc, char *argv[])
 
 
 	// vH(t) starting from r0, index=r
-	M2 vHxTemp(Nbin,0.0);
-	M2 vHyTemp(Nbin,0.0);
-	M2 vHzTemp(Nbin,0.0);
+	vector<double> vHxTemp(Nbin,0.0);
+	vector<double> vHyTemp(Nbin,0.0);
+	vector<double> vHzTemp(Nbin,0.0);
 
 	// number of measurements starting from this index
 	vector<int> Nvhx(Nbin,0);
 	vector<int> Nvhy(Nbin,0);
-	vector<int> Nvhy(Nbin,0);
+	vector<int> Nvhz(Nbin,0);
 
 
 	// initalize r vector: put particles on a fcc lattice
@@ -94,14 +94,12 @@ int main(int argc, char *argv[])
 
 	for( int n =0;n<navg;n++) {
 		r0 = r;
+
 		for(int ti=0;ti<Ntbin;ti++) {
 			integrate(r,dr,p,dp,deriv,0,tbs,dt);
-			get_vanHovexyz(vHxTemp,vHyTemp,vHzTemp,r,r0,bs,Nbins);
+			get_vhovexyz(vHxTemp,vHyTemp,vHzTemp,r,r0,bs,Nbin);
 		}
 	}
-
-
-
 
 	return 0;
 }

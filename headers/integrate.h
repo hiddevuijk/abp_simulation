@@ -51,6 +51,29 @@ void integrate_fixed_dt(std::vector<std::vector<double> >& r,
 		integrate(r,dr,p,dp,deriv,ti,tf,tf-ti);
 	}
 }
+
+
+template <typename Deriv_object>
+void integrate_full_fixed_dt(std::vector<std::vector<double> >& r,
+	std::vector<std::vector<double> >& dr,
+	std::vector<std::vector<double> >& v,
+	std::vector<std::vector<double> >& dv,
+	std::vector<std::vector<double> >& p,
+	std::vector<std::vector<double> >& dp,
+	Deriv_object& deriv, double ti, double tf, double dtmax)
+{
+	bool err = false;	// true if F*dt>sigma
+	double maxForce;
+	double dt = dtmax;
+	while( (ti+dt) <= tf){
+		deriv(r,dr,v,dv,p,dp,dt,err,maxForce);
+		ti += dt;
+	}
+	if(ti < tf) {
+		integrate_full_fixed_dt(r,dr,v,dv,p,dp,deriv,ti,tf,tf-ti);
+	}
+}
+
 /*
 void integrate(std::vector<std::vector<double> >& r,
 	std::vector<std::vector<double> >& p,

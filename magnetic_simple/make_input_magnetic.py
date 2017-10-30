@@ -1,11 +1,11 @@
 import numpy as np
 
-v0 = 5.0
+v0 = 10.0
 omega0 = 1.
 qB = 1.
-navg = 100;
+navg = 500;
 nbin = 75;
-N = 100;
+N = 300;
 Dt = 1./1;
 Dr = 20.*Dt;
 beta = 1.;
@@ -13,13 +13,13 @@ eps = 0.;
 sigma = 1.;
 seed = 123456789;
 d = sigma
-dt = (5.e-5)*d*d/Dt;
+dt = (5.e-4)*d*d/Dt;
 tf = .5*d*d/Dt;
 teq = 0.*d*d/Dt;
 
-rho = 0.2
+L = 10.
 
-L = (N/rho)**(1/3.)
+rho = N/(L**3) 
 
 bs_pAvg =L/nbin;
 

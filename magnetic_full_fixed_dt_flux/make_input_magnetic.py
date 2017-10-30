@@ -1,25 +1,26 @@
 import numpy as np
 
-v0 = 5.0
+v0 = 0.0
+m = 1e-4
+qB = 1.0
 omega0 = 1.
-qB = 1.
 navg = 100;
-nbin = 75;
-N = 100;
-Dt = 1./1;
+nbin = 50;
+N = 1;
+Dt = 1./1.;
 Dr = 20.*Dt;
 beta = 1.;
 eps = 0.;
 sigma = 1.;
 seed = 123456789;
 d = sigma
-dt = (5.e-5)*d*d/Dt;
+dt = (1.e-6)*d*d/Dt;
 tf = .5*d*d/Dt;
 teq = 0.*d*d/Dt;
 
-rho = 0.2
+L = 10.
 
-L = (N/rho)**(1/3.)
+rho = N/(L**3) 
 
 bs_pAvg =L/nbin;
 
@@ -30,6 +31,7 @@ infile.write("rho=\n%f\n" % rho)
 infile.write("Dt=\n%f\n" % Dt)
 infile.write("Dr=\n%f\n" % Dr)
 infile.write("v0=\n%f\n" % v0)
+infile.write("m=\n%f\n" % m)
 infile.write("qB=\n%f\n" % qB)
 infile.write("omega0\n%f\n" % omega0)
 infile.write("beta=\n%f\n" % beta)

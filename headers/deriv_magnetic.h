@@ -195,10 +195,12 @@ void Deriv::operator() (
 				etaX = ndist(generator)*sqrt_dt*sqrt_2Dr;
 				etaY = ndist(generator)*sqrt_dt*sqrt_2Dr;
 				etaZ = ndist(generator)*sqrt_dt*sqrt_2Dr;
-				p[i][0] += (etaY*p[i][2] - etaZ*p[i][1]);
-				p[i][1] += (etaZ*p[i][0] - etaX*p[i][2]);
-				p[i][2] += (etaX*p[i][1] - etaY*p[i][0]);
-
+				dp[i][0] = (etaY*p[i][2] - etaZ*p[i][1]);
+				dp[i][1] = (etaZ*p[i][0] - etaX*p[i][2]);
+				dp[i][2] = (etaX*p[i][1] - etaY*p[i][0]);
+				p[i][0] += dp[i][0];
+				p[i][1] += dp[i][1];
+				p[i][2] += dp[i][2];
 				
 				normalize(p[i]);
 

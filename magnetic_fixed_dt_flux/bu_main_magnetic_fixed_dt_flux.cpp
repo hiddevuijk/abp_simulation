@@ -59,6 +59,13 @@ int main(int argc, char *argv[])
 	vector<double> rhox_temp(NpAvg,0.);
 	vector<double> rhoy_temp(NpAvg,0.);
 	vector<double> rhoz_temp(NpAvg,0.);
+	vector<double> fluxy(NpAvg,0.);
+	vector<double> fluyx(NpAvg,0.);
+	vector<double> fluyy(NpAvg,0.);
+	vector<double> fluxy_temp(NpAvg,0.);
+	vector<double> fluyx_temp(NpAvg,0.);
+	vector<double> fluyy_temp(NpAvg,0.);
+
 
 
 	vector<double> bins(NpAvg,0.0);
@@ -67,7 +74,7 @@ int main(int argc, char *argv[])
 
 
 	vector<vector<double> > r(N,vector<double>(3));
-	vector<vector<double> > dr(N,vector<double>(3,0.));
+	vector<vector<double> > dr(N,vector<double>(3));
 	vector<vector<double> > p(N,vector<double>(3,1.));
 	vector<vector<double> > dp(N,vector<double>(3,1.));
 
@@ -80,8 +87,11 @@ int main(int argc, char *argv[])
 	// equilibrate: integrate until teq
 	integrate(r,dr,p,dp,deriv,0,teq,dt);
 
+	int errorCount = 0;
+
 	for( int n =0;n<navg;n++) {
-		integrate(r,dr,p,dp,deriv,0,tf,dt);
+		integrate(r,dr,p,dp,deriv,0,tf-dt,dt);
+		deriv(r,dr,p,dp,dt,0.1,0.1);
 
 		// get the orientation
 		orientation(r,p,pAvgx_temp,0,bs_pAvg,L);
@@ -92,6 +102,11 @@ int main(int argc, char *argv[])
 		density(r,rhox_temp,0,bs_pAvg,L);
 		density(r,rhoy_temp,1,bs_pAvg,L);
 		density(r,rhoz_temp,2,bs_pAvg,L);
+
+
+		flux2(r,dr,fluxy_temp,0,1,bs_pAvg,L,errorCount);
+		flux2(r,dr,fluyx_temp,1,0,bs_pAvg,L,errorCount);
+		flux2(r,dr,fluyy_temp,1,1,bs_pAvg,L,errorCount);
 
 
 		for(int i=0;i<NpAvg;++i) {
@@ -111,6 +126,11 @@ int main(int argc, char *argv[])
 			rhoy[i] += rhoy_temp[i]/(navg*N*bs_pAvg);
 			rhoz[i] += rhoz_temp[i]/(navg*N*bs_pAvg);
 
+			fluxy[i] += fluxy_temp[i]/(navg*dt*L*L);
+			fluyx[i] += fluyx_temp[i]/(navg*dt*L*L);
+			fluyy[i] += fluyy_temp[i]/(navg*dt*L*L);
+
+
 		}	
 	}
 	
@@ -120,9 +140,12 @@ int main(int argc, char *argv[])
 	write_vec(rhox,"rhox.dat");
 	write_vec(rhoy,"rhoy.dat");
 	write_vec(rhoz,"rhoz.dat");
+	write_vec(fluxy,"fluxy.dat");
+	write_vec(fluyx,"fluyx.dat");
+	write_vec(fluyy,"fluyy,dat");
 	write_vec(bins,"bins.dat");
 
-
+	cout << errorCount;
 
 	return 0;
 }
